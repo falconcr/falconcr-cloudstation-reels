@@ -1,0 +1,4 @@
+node_modules/
+motor/out/
+motor/public/voz*.m4a
+motor/musica.mp3

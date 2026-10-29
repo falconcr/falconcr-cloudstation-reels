@@ -1,0 +1,94 @@
+{
+ "serie": "SI TUVIERA 18",
+ "pilar": "SOFTWARE",
+ "escenas": [
+  {
+   "id": "hook",
+   "tipo": "hook",
+   "titulo": "Lo que estudiaría en software",
+   "voz": "Si volviera a tener 18 años, esto es lo que estudiaría para trabajar en software.",
+   "seg": 5
+  },
+  {
+   "id": "p1",
+   "tipo": "codigo",
+   "numero": 1,
+   "titulo": "Un lenguaje, a fondo",
+   "claves": [
+    "Python",
+    "JavaScript",
+    "Lógica"
+   ],
+   "voz": "Uno: un solo lenguaje, a fondo. Python o JavaScript. Lógica, estructuras de datos y cómo resolver problemas.",
+   "seg": 6.5
+  },
+  {
+   "id": "p2",
+   "tipo": "terminal",
+   "numero": 2,
+   "titulo": "Git y la terminal",
+   "claves": [
+    "Git",
+    "Linux"
+   ],
+   "voz": "Dos: Git y la terminal de Linux. Todo equipo serio trabaja así desde el primer día.",
+   "seg": 6
+  },
+  {
+   "id": "p3",
+   "tipo": "web",
+   "numero": 3,
+   "titulo": "La web por dentro",
+   "claves": [
+    "HTTP",
+    "APIs",
+    "SQL"
+   ],
+   "voz": "Tres: cómo funciona la web por dentro. HTTP, APIs y bases de datos con SQL.",
+   "seg": 5.5
+  },
+  {
+   "id": "p4",
+   "tipo": "nube",
+   "numero": 4,
+   "titulo": "Nube y contenedores",
+   "claves": [
+    "Docker",
+    "Kubernetes",
+    "AWS",
+    "Google Cloud"
+   ],
+   "voz": "Cuatro: la nube y los contenedores. Docker, una nube como AWS o Google Cloud, y poner tu app en producción.",
+   "seg": 7
+  },
+  {
+   "id": "p5",
+   "tipo": "ia",
+   "numero": 5,
+   "titulo": "IA como herramienta",
+   "claves": [
+    "No como muleta"
+   ],
+   "voz": "Cinco: IA como herramienta, no como muleta. Usala para programar más rápido, pero entendé cada línea que te da.",
+   "seg": 7
+  },
+  {
+   "id": "extra",
+   "tipo": "proyectos",
+   "titulo": "Lo que más me hubiera ayudado",
+   "claves": [
+    "Proyectos reales",
+    "Inglés técnico"
+   ],
+   "voz": "Y lo que más me hubiera ayudado: construir proyectos reales y aprender inglés técnico.",
+   "seg": 5.5
+  },
+  {
+   "id": "cta",
+   "tipo": "cta",
+   "titulo": "Cursos de cloud, software e IA",
+   "voz": "En Cloud Station damos cursos de cloud, software e IA. Escribinos por WhatsApp.",
+   "seg": 5
+  }
+ ]
+}
