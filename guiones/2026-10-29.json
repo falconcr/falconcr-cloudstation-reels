@@ -90,5 +90,7 @@
    "voz": "En Cloud Station damos cursos de cloud, software e IA. Escribinos por WhatsApp.",
    "seg": 5
   }
- ]
+ ],
+ "estilo": "espacio",
+ "formato": "lista"
 }

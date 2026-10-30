@@ -1,0 +1,75 @@
+{
+ "actualizado": "2026-10-29",
+ "nota": "La tarea mensual de tendencias actualiza este archivo. La tarea de guiones lo lee para elegir formato, estilo y gancho.",
+ "rotacion_estilos": [
+  "espacio",
+  "terminal",
+  "blueprint",
+  "tarjetas"
+ ],
+ "estilo_por_tema": {
+  "terminal": "DevOps, CI/CD, código, comandos",
+  "blueprint": "arquitectura, diagramas, HA, redes",
+  "tarjetas": "comparaciones, costos, cifras",
+  "espacio": "carrera, ganchos generales, IA"
+ },
+ "formatos": {
+  "lista": {
+   "peso": 1,
+   "escenas": "hook → puntos/codigo/terminal/web/nube/ia (numerados) → checklist opcional → cta",
+   "uso": "roadmaps, '5 cosas que…'"
+  },
+  "mito": {
+   "peso": 1,
+   "escenas": "hook → mito (veredicto FALSO/MITO) → realidad → puntos opcional → cta",
+   "uso": "creencias comunes falsas"
+  },
+  "error-solucion": {
+   "peso": 1,
+   "escenas": "hook → error → solucion (1 o 2 pares) → cta",
+   "uso": "seguridad, costos, malas prácticas"
+  },
+  "historia": {
+   "peso": 1,
+   "escenas": "hook → linea (2 a 4, con hora) → solucion → cta",
+   "uso": "caídas, incidentes, migraciones"
+  },
+  "versus": {
+   "peso": 1,
+   "escenas": "hook → versus → puntos (cuándo usar cada uno) → cta",
+   "uso": "A vs B, decisiones de diseño"
+  },
+  "cifra": {
+   "peso": 1,
+   "escenas": "hook → cifra (1 o 2) → puntos → cta",
+   "uso": "SLA, costos, sueldos"
+  },
+  "checklist": {
+   "peso": 1,
+   "escenas": "hook → checklist → puntos opcional → cta",
+   "uso": "antes de migrar, lo que nadie te dice"
+  }
+ },
+ "ganchos": [
+  "Pregunta incómoda directa: '¿Sabés cuánto pagás por servidores que nadie usa?'",
+  "Cifra concreta en la primera frase: '99.9% son 8 horas caído al año'",
+  "Afirmación polémica: 'Kubernetes no te va a ahorrar plata'",
+  "Error en segunda persona: 'Estás dejando tu bucket público y no lo sabés'",
+  "Si volviera a empezar / lo que nadie te dice"
+ ],
+ "reglas": [
+  "Gancho en los primeros 2 segundos, sin presentarse",
+  "Algo cambia en pantalla cada 2 o 3 segundos",
+  "Una idea por escena, frases cortas",
+  "Cierre con pregunta para comentarios en el texto del post",
+  "40 a 60 segundos"
+ ],
+ "historial": [
+  {
+   "fecha": "2026-10-29",
+   "tema": "Si volviera a tener 18: lo que estudiaría en software",
+   "formato": "lista",
+   "estilo": "espacio"
+  }
+ ]
+}

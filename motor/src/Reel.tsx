@@ -1,29 +1,34 @@
 import React from 'react';
-import {AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig, Easing, Audio} from 'remotion';
+import {AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig, Easing, Audio, random} from 'remotion';
 import {TransitionSeries, linearTiming} from '@remotion/transitions';
 import {slide} from '@remotion/transitions/slide';
 import {fade} from '@remotion/transitions/fade';
-import {C, F, FPS, TRANS} from './brand';
-import {guion, Escena, SERIE, PILAR, WHATSAPP} from './guion';
+import {wipe} from '@remotion/transitions/wipe';
+import {C, F, FPS, TRANS, T, setEstilo, Estilo} from './brand';
+import {guion as guionBase, Escena, SERIE, PILAR, WHATSAPP, ESTILO} from './guion';
 
-export type ReelProps = {voz?: string; musica?: string; tiempos?: {inicio: number; fin: number; palabras?: {w: string; s: number; e: number}[]}[]};
+type Palabra = {w: string; s: number; e: number};
+export type ReelProps = {voz?: string; estilo?: Estilo; escenas?: Escena[]; tiempos?: {inicio: number; fin: number; palabras?: Palabra[]}[]};
+
+const escenasDe = (p: ReelProps) => p.escenas ?? guionBase;
 
 // ---------- tiempos ----------
-export const duraciones = (props: ReelProps) =>
-  guion.map((e, i) => {
+export const duraciones = (props: ReelProps) => {
+  const g = escenasDe(props);
+  return g.map((e, i) => {
     const t = props.tiempos?.[i];
     const seg = t ? t.fin - t.inicio : e.seg;
-    return Math.round(seg * FPS) + (i < guion.length - 1 ? TRANS : 0);
+    return Math.round(seg * FPS) + (i < g.length - 1 ? TRANS : 0);
   });
+};
 export const totalFrames = (props: ReelProps) => {
   const d = duraciones(props);
   return d.reduce((a, b) => a + b, 0) - TRANS * (d.length - 1);
 };
 const inicios = (props: ReelProps) => {
-  const d = duraciones(props);
   const s: number[] = [];
   let acc = 0;
-  d.forEach((x) => { s.push(acc); acc += x - TRANS; });
+  duraciones(props).forEach((x) => { s.push(acc); acc += x - TRANS; });
   return s;
 };
 
@@ -33,6 +38,10 @@ const useIn = (delay = 0, damping = 14) => {
   const {fps} = useVideoConfig();
   return spring({frame: f - delay, fps, config: {damping, mass: 0.7}});
 };
+// "*palabra*" se pinta en naranja
+const Rich: React.FC<{t: string; color?: string}> = ({t, color = T.hi}) => (
+  <>{t.split(/(\*[^*]+\*)/).map((p, i) => (p.startsWith('*') ? <span key={i} style={{color}}>{p.slice(1, -1)}</span> : <React.Fragment key={i}>{p}</React.Fragment>))}</>
+);
 const Star: React.FC<{x: number; y: number; s: number; delay?: number; color?: string}> = ({x, y, s, delay = 0, color = C.naranja}) => {
   const f = useCurrentFrame();
   const k = useIn(delay, 10);
@@ -43,67 +52,97 @@ const Star: React.FC<{x: number; y: number; s: number; delay?: number; color?: s
     </svg>
   );
 };
+const borde = (c = T.line, w = 3) => `${w}px ${T.dashed ? 'dashed' : 'solid'} ${c}`;
 const Chip: React.FC<{children: React.ReactNode; delay: number; solid?: boolean}> = ({children, delay, solid}) => {
   const k = useIn(delay);
   return (
     <span style={{display: 'inline-block', transform: `translateY(${(1 - k) * 40}px)`, opacity: k, font: `700 44px/1 ${F.body}`, padding: '18px 34px', borderRadius: 999,
-      background: solid ? C.naranja : C.alt, color: solid ? C.onAccent : C.brandInk, border: `3px solid ${solid ? C.naranja : C.line}`}}>{children}</span>
+      background: solid ? C.naranja : T.card, color: solid ? C.onAccent : T.brand, border: solid ? `3px solid ${C.naranja}` : borde(), boxShadow: T.shadow}}>{children}</span>
   );
 };
-const Card: React.FC<{children: React.ReactNode; style?: React.CSSProperties; delay?: number}> = ({children, style, delay = 6}) => {
+const Card: React.FC<{children: React.ReactNode; style?: React.CSSProperties; delay?: number; color?: string}> = ({children, style, delay = 6, color}) => {
   const k = useIn(delay);
-  return <div style={{background: C.alt, border: `3px solid ${C.line}`, borderRadius: 28, padding: 44, transform: `translateY(${(1 - k) * 80}px)`, opacity: k, ...style}}>{children}</div>;
+  return <div style={{background: T.card, border: borde(color ?? T.line), borderRadius: T.radius, padding: 44, boxShadow: T.shadow, transform: `translateY(${(1 - k) * 80}px)`, opacity: k, ...style}}>{children}</div>;
 };
 const Typed: React.FC<{text: string; start: number; cps?: number}> = ({text, start, cps = 26}) => {
   const f = useCurrentFrame();
   const n = Math.max(0, Math.floor(((f - start) / FPS) * cps));
-  const shown = text.slice(0, n);
   const cursor = n < text.length || Math.floor(f / 15) % 2 === 0;
-  return <>{shown}<span style={{color: C.naranja, opacity: cursor ? 1 : 0}}>▍</span></>;
+  return <>{text.slice(0, n)}<span style={{color: C.naranja, opacity: cursor ? 1 : 0}}>▍</span></>;
 };
 
-// ---------- fondo y capas fijas ----------
+// ---------- fondos por estilo ----------
 const Fondo: React.FC = () => {
   const f = useCurrentFrame();
+  if (T.estilo === 'terminal')
+    return (
+      <AbsoluteFill style={{background: '#050a1c'}}>
+        <AbsoluteFill style={{backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 6px)'}} />
+        <AbsoluteFill style={{background: 'radial-gradient(circle at 50% 45%, rgba(30,58,138,0.35) 0, rgba(5,10,28,0) 65%)'}} />
+        <div style={{position: 'absolute', left: 72, bottom: 120, font: `500 28px/1 ${F.mono}`, color: '#3b4a85'}}>~/cloudstation $ <span style={{opacity: Math.floor(f / 15) % 2}}>▍</span></div>
+      </AbsoluteFill>
+    );
+  if (T.estilo === 'blueprint')
+    return (
+      <AbsoluteFill style={{background: C.azul}}>
+        <AbsoluteFill style={{backgroundImage: 'linear-gradient(rgba(255,255,255,0.07) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,0.07) 2px, transparent 2px)', backgroundSize: '45px 45px'}} />
+        <AbsoluteFill style={{backgroundImage: 'linear-gradient(rgba(255,255,255,0.13) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,0.13) 2px, transparent 2px)', backgroundSize: '225px 225px'}} />
+        <div style={{position: 'absolute', right: 72, bottom: 110, border: '3px solid rgba(255,255,255,0.5)', padding: '14px 22px', font: `500 24px/1.4 ${F.mono}`, color: 'rgba(255,255,255,0.7)'}}>CLOUD STATION<br />LÁM. {String(1 + (Math.floor(f / 300) % 9)).padStart(2, '0')} · ESC 1:1</div>
+      </AbsoluteFill>
+    );
+  if (T.estilo === 'tarjetas')
+    return (
+      <AbsoluteFill style={{background: '#f3f5fb'}}>
+        <div style={{position: 'absolute', width: 760, height: 760, right: -260, top: -180, borderRadius: 380, background: '#e3e8f7'}} />
+        <div style={{position: 'absolute', width: 520, height: 150, left: -120, bottom: 300, borderRadius: 75, background: '#ffe6c7'}} />
+      </AbsoluteFill>
+    );
+  // espacio
+  const stars = Array.from({length: 70}, (_, i) => {
+    const x = random(`x${i}`) * 1080, y = random(`y${i}`) * 1920, s = 2 + random(`s${i}`) * 4;
+    const o = 0.35 + 0.65 * Math.abs(Math.sin((f + i * 17) / (25 + i % 7 * 6)));
+    return <div key={i} style={{position: 'absolute', left: x, top: y, width: s, height: s, borderRadius: s, background: '#ffffff', opacity: o * 0.7}} />;
+  });
   return (
-    <AbsoluteFill style={{background: `radial-gradient(circle at 85% 85%, rgba(30,58,138,0.55) 0, rgba(30,58,138,0) 55%), ${C.noche}`}}>
-      <AbsoluteFill style={{backgroundImage: `radial-gradient(${C.line} 3px, transparent 3.5px)`, backgroundSize: '72px 72px', backgroundPosition: `36px ${(f * 0.4) % 72}px`, opacity: 0.55}} />
+    <AbsoluteFill style={{background: `radial-gradient(circle at 85% 85%, rgba(30,58,138,0.6) 0, rgba(30,58,138,0) 55%), ${C.noche}`}}>
+      {stars}
     </AbsoluteFill>
   );
 };
 
+// ---------- capas fijas ----------
 const Header: React.FC<{props: ReelProps}> = ({props}) => {
   const f = useCurrentFrame();
+  const g = escenasDe(props);
   const s = inicios(props);
-  const idx = s.filter((x) => f >= x - TRANS / 2).length - 1;
-  const actual = guion[Math.max(0, idx)];
-  const esCta = actual.tipo === 'cta';
+  const idx = Math.max(0, s.filter((x) => f >= x - TRANS / 2).length - 1);
+  const actual = g[idx];
+  const numerados = g.filter((e) => e.numero).length;
+  const seg = numerados || g.length - 1;
+  const avance = numerados ? (actual.numero ?? (idx === 0 ? 0 : idx >= g.length - 2 ? seg : 0)) : idx;
   return (
-    <div style={{position: 'absolute', top: 150, left: 72, right: 72, opacity: esCta ? 0 : 1}}>
+    <div style={{position: 'absolute', top: 150, left: 72, right: 72, opacity: actual.tipo === 'cta' ? 0 : 1}}>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <Img src={staticFile('isotipo-blanco.png')} style={{width: 104}} />
-        <span style={{font: `700 30px/1 ${F.body}`, letterSpacing: '0.08em', color: C.brandInk, padding: '14px 26px', borderRadius: 999, background: C.alt, border: `2px solid ${C.line}`}}>
-          {SERIE} · <span style={{color: C.accentInk}}>{PILAR}</span>
+        <Img src={staticFile(T.logo)} style={{width: 104}} />
+        <span style={{font: `700 30px/1 ${F.body}`, letterSpacing: '0.08em', color: T.brand, padding: '14px 26px', borderRadius: 999, background: T.card, border: borde(T.line, 2), boxShadow: T.shadow}}>
+          {SERIE} · <span style={{color: T.accentInk}}>{PILAR}</span>
         </span>
       </div>
       <div style={{display: 'flex', gap: 14, marginTop: 34}}>
-        {[1, 2, 3, 4, 5].map((n) => {
-          const done = (actual.numero ?? (actual.tipo === 'hook' ? 0 : 6)) >= n;
-          return <div key={n} style={{flex: 1, height: 10, borderRadius: 5, background: done ? C.naranja : C.line}} />;
-        })}
+        {Array.from({length: seg}, (_, i) => <div key={i} style={{flex: 1, height: 10, borderRadius: 5, background: avance > i ? C.naranja : T.line}} />)}
       </div>
     </div>
   );
 };
 
-// subtítulos por grupos de palabras; con transcripción usan los tiempos reales de cada palabra
 const Subtitulos: React.FC<{props: ReelProps}> = ({props}) => {
   const f = useCurrentFrame();
   const t = f / FPS;
+  const g = escenasDe(props);
   const s = inicios(props);
   const d = duraciones(props);
-  let palabras: {w: string; s: number; e: number}[] = [];
-  guion.forEach((e, i) => {
+  let palabras: Palabra[] = [];
+  g.forEach((e, i) => {
     const real = props.tiempos?.[i]?.palabras;
     if (real) { palabras = palabras.concat(real); return; }
     const ws = e.voz.split(' ');
@@ -112,90 +151,115 @@ const Subtitulos: React.FC<{props: ReelProps}> = ({props}) => {
     let acc = a;
     ws.forEach((w, j) => { const dur = ((b - a) * peso[j]) / tot; palabras.push({w, s: acc, e: acc + dur}); acc += dur; });
   });
-  // agrupar: máx 4 palabras o corte en puntuación
-  const grupos: typeof palabras[] = [];
-  let g: typeof palabras = [];
-  palabras.forEach((p) => { g.push(p); if (g.length >= 4 || /[.:,?]$/.test(p.w)) { grupos.push(g); g = []; } });
-  if (g.length) grupos.push(g);
-  const actual = grupos.find((gr) => t >= gr[0].s - 0.05 && t <= gr[gr.length - 1].e + 0.15);
+  const grupos: Palabra[][] = [];
+  let gr: Palabra[] = [];
+  palabras.forEach((p) => { gr.push(p); if (gr.length >= 4 || /[.:,?!]$/.test(p.w)) { grupos.push(gr); gr = []; } });
+  if (gr.length) grupos.push(gr);
+  const actual = grupos.find((x) => t >= x[0].s - 0.05 && t <= x[x.length - 1].e + 0.15);
   if (!actual) return null;
   const k = Math.min(1, (t - actual[0].s + 0.05) * 8);
   return (
     <div style={{position: 'absolute', left: 60, right: 60, top: 1395, display: 'flex', justifyContent: 'center'}}>
-      <div style={{font: `700 64px/1.15 ${F.body}`, textAlign: 'center', color: C.ink, background: 'rgba(11,21,51,0.82)', padding: '18px 34px', borderRadius: 24, transform: `scale(${0.92 + 0.08 * k})`}}>
+      <div style={{font: `700 64px/1.15 ${F.body}`, textAlign: 'center', color: T.captionInk, background: T.captionBg, padding: '18px 34px', borderRadius: 24, transform: `scale(${0.92 + 0.08 * k})`}}>
         {actual.map((p, i) => (
-          <span key={i} style={{color: t >= p.s ? (t <= p.e ? C.naranja : C.ink) : C.muted}}>{p.w}{i < actual.length - 1 ? ' ' : ''}</span>
+          <span key={i} style={{color: t >= p.s ? (t <= p.e ? C.naranja : T.captionInk) : 'rgba(200,210,240,0.75)'}}>{p.w}{i < actual.length - 1 ? ' ' : ''}</span>
         ))}
       </div>
     </div>
   );
 };
 
-// ---------- título de punto ----------
-const Titulo: React.FC<{e: Escena}> = ({e}) => {
-  const k = useIn(0);
-  const k2 = useIn(5);
+// ---------- piezas comunes ----------
+const Titulo: React.FC<{e: Escena; size?: number}> = ({e, size = 84}) => {
+  const k = useIn(0), k2 = useIn(5);
   return (
     <div style={{display: 'flex', alignItems: 'center', gap: 36}}>
       {e.numero && (
-        <div style={{width: 150, height: 150, flex: 'none', borderRadius: 75, background: C.naranja, color: C.onAccent, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `700 96px/1 ${F.display}`, transform: `scale(${k})`}}>{e.numero}</div>
+        <div style={{width: 150, height: 150, flex: 'none', borderRadius: T.estilo === 'terminal' ? 20 : 75, background: C.naranja, color: C.onAccent, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `700 96px/1 ${T.titleFont}`, transform: `scale(${k})`}}>{e.numero}</div>
       )}
-      <div style={{font: `700 84px/0.98 ${F.display}`, color: C.ink, opacity: k2, transform: `translateX(${(1 - k2) * 60}px)`, textWrap: 'balance' as any}}>{e.titulo}</div>
+      <div style={{font: `700 ${Math.round(size * T.escala)}px/1 ${T.titleFont}`, color: T.ink, opacity: k2, transform: `translateX(${(1 - k2) * 60}px)`, textWrap: 'balance' as any}}><Rich t={e.titulo} /></div>
     </div>
   );
 };
-const Claves: React.FC<{e: Escena; delay: number}> = ({e, delay}) => (
-  <div style={{display: 'flex', flexWrap: 'wrap', gap: 18}}>{e.claves?.map((c, i) => <Chip key={c} delay={delay + i * 7}>{c}</Chip>)}</div>
-);
+const Texto: React.FC<{t?: string; delay?: number}> = ({t, delay = 14}) => {
+  const k = useIn(delay);
+  if (!t) return null;
+  return <div style={{font: `400 46px/1.35 ${F.body}`, color: T.muted, opacity: k, transform: `translateY(${(1 - k) * 30}px)`}}><Rich t={t} color={T.accentInk} /></div>;
+};
+const Claves: React.FC<{e: Escena; delay: number}> = ({e, delay}) =>
+  e.claves?.length ? <div style={{display: 'flex', flexWrap: 'wrap', gap: 18}}>{e.claves.map((c, i) => <Chip key={c} delay={delay + i * 7}>{c}</Chip>)}</div> : null;
 const Zona: React.FC<{children: React.ReactNode}> = ({children}) => (
-  <AbsoluteFill style={{transform: `scale(${1 + Math.min(useCurrentFrame(), 360) * 0.00008})`}}><div style={{position: 'absolute', top: 340, left: 72, right: 72, height: 1020, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 64}}>{children}</div></AbsoluteFill>
+  <AbsoluteFill style={{transform: `scale(${1 + Math.min(useCurrentFrame(), 360) * 0.00008})`}}>
+    <div style={{position: 'absolute', top: 340, left: 72, right: 72, height: 1020, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 64}}>{children}</div>
+  </AbsoluteFill>
+);
+const Sello: React.FC<{txt: string; color: string; delay: number; rot?: number}> = ({txt, color, delay, rot = -8}) => {
+  const k = useIn(delay, 8);
+  return <div style={{display: 'inline-block', font: `700 72px/1 ${T.titleFont}`, letterSpacing: '0.06em', color, border: `8px solid ${color}`, borderRadius: 18, padding: '18px 34px', transform: `scale(${2.2 - 1.2 * k}) rotate(${rot}deg)`, opacity: Math.min(1, k * 2)}}>{txt}</div>;
+};
+const Icono: React.FC<{ok: boolean; size?: number}> = ({ok, size = 120}) => (
+  <svg width={size} height={size} viewBox="0 0 120 120" style={{flex: 'none'}}>
+    <circle cx={60} cy={60} r={54} fill={ok ? T.ok : T.error} />
+    {ok ? <path d="M34 62 l18 18 l36 -40" fill="none" stroke={C.onAccent} strokeWidth={13} strokeLinecap="round" strokeLinejoin="round" />
+      : <path d="M40 40 L80 80 M80 40 L40 80" stroke="#ffffff" strokeWidth={13} strokeLinecap="round" />}
+  </svg>
 );
 
-// ---------- escenas ----------
-const Hook: React.FC<{e: Escena}> = () => {
+// ---------- escenas: gancho ----------
+const Hook: React.FC<{e: Escena}> = ({e}) => {
   const f = useCurrentFrame();
   const a = useIn(0), b = useIn(8, 9), c = useIn(22);
+  if (e.grande)
+    return (
+      <Zona>
+        <div style={{marginTop: 40, font: `600 76px/1 ${T.titleFont}`, color: T.brand, opacity: a}}>{e.texto}</div>
+        <div style={{position: 'relative', height: 560}}>
+          <div style={{position: 'absolute', left: -20, top: -40, font: `700 620px/1 ${F.display}`, color: C.naranja, letterSpacing: '-0.04em', transform: `scale(${b})`, transformOrigin: 'left center'}}>{e.grande}</div>
+          <Star x={760} y={40} s={110} delay={14} /><Star x={900} y={200} s={64} delay={20} /><Star x={650} y={-20} s={50} delay={26} />
+        </div>
+        <div style={{font: `700 ${Math.round(80 * T.escala)}px/1.02 ${T.titleFont}`, color: T.ink, opacity: c, transform: `translateY(${(1 - c) * 50}px)`}}><Rich t={e.titulo} /></div>
+      </Zona>
+    );
   return (
     <Zona>
-      <div style={{marginTop: 40, font: `600 76px/1 ${F.display}`, color: C.brandInk, opacity: a, transform: `translateY(${(1 - a) * 40}px)`}}>Si volviera a tener</div>
-      <div style={{position: 'relative', height: 560}}>
-        <div style={{position: 'absolute', left: -20, top: -40, font: `700 620px/1 ${F.display}`, color: C.naranja, letterSpacing: '-0.04em', transform: `scale(${b})`, transformOrigin: 'left center'}}>18</div>
-        <div style={{position: 'absolute', left: 700, top: 360, font: `700 96px/1 ${F.display}`, color: C.ink, opacity: c}}>años</div>
-        <Star x={760} y={40} s={110} delay={14} />
-        <Star x={900} y={200} s={64} delay={20} />
-        <Star x={650} y={-20} s={50} delay={26} />
-      </div>
-      <div style={{font: `700 80px/1.02 ${F.display}`, color: C.ink, opacity: c, transform: `translateY(${(1 - c) * 50}px)`}}>
-        esto es lo que estudiaría en <span style={{color: C.naranja}}>software</span>
-      </div>
-      <div style={{height: 8, width: interpolate(f, [30, 70], [0, 420], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)}), background: C.naranja, borderRadius: 4}} />
+      <div style={{font: `700 ${Math.round(128 * T.escala)}px/0.98 ${T.titleFont}`, color: T.ink, opacity: a, transform: `translateY(${(1 - a) * 60}px)`, textWrap: 'balance' as any}}><Rich t={e.titulo} /></div>
+      <div style={{height: 10, width: interpolate(f, [18, 50], [0, 460], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)}), background: C.naranja, borderRadius: 5}} />
+      <Texto t={e.texto} delay={20} />
+      <div style={{position: 'relative', height: 140}}><Star x={780} y={0} s={120} delay={26} /><Star x={700} y={90} s={50} delay={32} /></div>
     </Zona>
   );
 };
 
+// ---------- formato lista ----------
+const Puntos: React.FC<{e: Escena}> = ({e}) => (
+  <Zona>
+    <Titulo e={e} />
+    <Texto t={e.texto} />
+    <Claves e={e} delay={24} />
+  </Zona>
+);
 const Codigo: React.FC<{e: Escena}> = ({e}) => (
   <Zona>
     <Titulo e={e} />
-    <Card style={{font: `500 40px/1.6 ${F.mono}`, color: C.ink, minHeight: 360}}>
-      <div style={{color: C.muted, marginBottom: 12}}># resolver un problema real</div>
+    <Card style={{font: `500 40px/1.6 ${F.mono}`, color: T.codeInk, background: T.codeBg, minHeight: 360}}>
+      <div style={{color: '#8b97c2', marginBottom: 12}}># resolver un problema real</div>
       <div style={{whiteSpace: 'pre'}}><Typed start={20} text={'def promedio(notas):\n    total = sum(notas)\n    return total / len(notas)\n\nprint(promedio([8, 9, 10]))'} /></div>
     </Card>
     <Claves e={e} delay={40} />
   </Zona>
 );
-
 const Terminal: React.FC<{e: Escena}> = ({e}) => {
   const f = useCurrentFrame();
   const lines = ['git init', 'git add .', 'git commit -m "primer proyecto"', 'git push origin main'];
   return (
     <Zona>
       <Titulo e={e} />
-      <Card style={{padding: 0, overflow: 'hidden', background: '#070d24'}}>
-        <div style={{display: 'flex', gap: 14, padding: '24px 32px', borderBottom: `3px solid ${C.line}`}}>
-          {[C.naranja, C.brandInk, C.line].map((c, i) => <div key={i} style={{width: 24, height: 24, borderRadius: 12, background: c}} />)}
-          <span style={{marginLeft: 18, font: `500 30px/24px ${F.mono}`, color: C.muted}}>gerardo@cloudstation: ~</span>
+      <Card style={{padding: 0, overflow: 'hidden', background: T.codeBg}}>
+        <div style={{display: 'flex', gap: 14, padding: '24px 32px', borderBottom: '3px solid #22316a'}}>
+          {[C.naranja, '#c7d2fe', '#26356e'].map((c, i) => <div key={i} style={{width: 24, height: 24, borderRadius: 12, background: c}} />)}
+          <span style={{marginLeft: 18, font: `500 30px/24px ${F.mono}`, color: '#8b97c2'}}>gerardo@cloudstation: ~</span>
         </div>
-        <div style={{padding: 40, font: `500 42px/1.7 ${F.mono}`, color: C.ink}}>
+        <div style={{padding: 40, font: `500 42px/1.7 ${F.mono}`, color: T.codeInk}}>
           {lines.map((l, i) => {
             const st = 18 + i * 26;
             if (f < st) return null;
@@ -207,64 +271,56 @@ const Terminal: React.FC<{e: Escena}> = ({e}) => {
     </Zona>
   );
 };
-
-const Web: React.FC<{e: Escena}> = ({e}) => {
-  const f = useCurrentFrame();
-  const nodes = [{x: 0, t: 'Navegador'}, {x: 330, t: 'API'}, {x: 660, t: 'Base de datos'}];
-  const p = interpolate(f % 70, [0, 35, 70], [0, 1, 0]);
-  const px = 135 + p * 660;
-  return (
-    <Zona>
-      <Titulo e={e} />
-      <div style={{position: 'relative', height: 420}}>
-        <svg width={936} height={420} style={{position: 'absolute'}}>
-          <line x1={135} y1={150} x2={795} y2={150} stroke={C.line} strokeWidth={8} strokeLinecap="round" strokeDasharray="4 22" />
-          <circle cx={px} cy={150} r={20} fill={C.naranja} opacity={f > 30 ? 1 : 0} />
-        </svg>
-        {nodes.map((n, i) => (
-          <Node key={i} x={n.x} label={n.t} delay={8 + i * 8} i={i} />
-        ))}
-        <span style={{position: 'absolute', left: 300, top: 96, transform: 'translateX(-50%)', font: `700 32px/1 ${F.mono}`, color: C.accentInk}}>HTTP</span>
-        <span style={{position: 'absolute', left: 630, top: 96, transform: 'translateX(-50%)', font: `700 32px/1 ${F.mono}`, color: C.accentInk}}>SQL</span>
-      </div>
-      <Claves e={e} delay={44} />
-    </Zona>
-  );
-};
 const Node: React.FC<{x: number; label: string; delay: number; i: number}> = ({x, label, delay, i}) => {
   const k = useIn(delay);
-  const g = {stroke: C.ink, strokeWidth: 8, fill: 'none', strokeLinecap: 'round' as const};
+  const g = {stroke: T.ink, strokeWidth: 8, fill: 'none', strokeLinecap: 'round' as const};
   return (
     <div style={{position: 'absolute', left: x, top: 40, width: 270, textAlign: 'center', transform: `scale(${k})`}}>
-      <div style={{width: 220, height: 220, margin: '0 auto', borderRadius: 40, background: C.alt, border: `4px solid ${i === 1 ? C.naranja : C.line}`, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <div style={{width: 220, height: 220, margin: '0 auto', borderRadius: T.radius + 12, background: T.card, border: borde(i === 1 ? C.naranja : T.line, 4), boxShadow: T.shadow, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <svg width={120} height={120} viewBox="0 0 120 120">
           {i === 0 && <><rect x={10} y={20} width={100} height={80} rx={14} {...g} /><line x1={10} y1={44} x2={110} y2={44} {...g} /><circle cx={28} cy={32} r={3} fill={C.naranja} /></>}
           {i === 1 && <text x={60} y={80} textAnchor="middle" style={{font: `700 64px ${F.mono}`}} fill={C.naranja}>{'{ }'}</text>}
           {i === 2 && <><ellipse cx={60} cy={28} rx={40} ry={14} {...g} /><path d="M20 28v64c0 8 18 14 40 14s40-6 40-14V28" {...g} /><path d="M20 60c0 8 18 14 40 14s40-6 40-14" {...g} /></>}
         </svg>
       </div>
-      <div style={{marginTop: 22, font: `600 36px/1.1 ${F.body}`, color: C.muted}}>{label}</div>
+      <div style={{marginTop: 22, font: `600 36px/1.1 ${F.body}`, color: T.muted}}>{label}</div>
     </div>
   );
 };
-
+const Web: React.FC<{e: Escena}> = ({e}) => {
+  const f = useCurrentFrame();
+  const p = interpolate(f % 70, [0, 35, 70], [0, 1, 0]);
+  return (
+    <Zona>
+      <Titulo e={e} />
+      <div style={{position: 'relative', height: 420}}>
+        <svg width={936} height={420} style={{position: 'absolute'}}>
+          <line x1={135} y1={150} x2={795} y2={150} stroke={T.line} strokeWidth={8} strokeLinecap="round" strokeDasharray="4 22" />
+          <circle cx={135 + p * 660} cy={150} r={20} fill={C.naranja} opacity={f > 30 ? 1 : 0} />
+        </svg>
+        {['Navegador', 'API', 'Base de datos'].map((t, i) => <Node key={i} x={i * 330} label={t} delay={8 + i * 8} i={i} />)}
+        <span style={{position: 'absolute', left: 300, top: 96, transform: 'translateX(-50%)', font: `700 32px/1 ${F.mono}`, color: T.accentInk}}>HTTP</span>
+        <span style={{position: 'absolute', left: 630, top: 96, transform: 'translateX(-50%)', font: `700 32px/1 ${F.mono}`, color: T.accentInk}}>SQL</span>
+      </div>
+      <Claves e={e} delay={44} />
+    </Zona>
+  );
+};
 const Nube: React.FC<{e: Escena}> = ({e}) => {
   const f = useCurrentFrame();
-  const g = {stroke: C.ink, strokeWidth: 12, fill: 'none', strokeLinecap: 'round' as const};
-  const ok = useIn(70);
+  const ok = useIn(70), nube = useIn(4);
   return (
     <Zona>
       <Titulo e={e} />
       <div style={{position: 'relative', height: 440}}>
         <svg width={936} height={440} style={{position: 'absolute'}}>
-          <path d="M300 300 a90 90 0 0 1 60 -170 a120 120 0 0 1 220 -10 a90 90 0 0 1 80 180 z" {...g} stroke={C.brandInk} opacity={useIn(4)} />
+          <path d="M300 300 a90 90 0 0 1 60 -170 a120 120 0 0 1 220 -10 a90 90 0 0 1 80 180 z" stroke={T.brand} strokeWidth={12} fill="none" strokeLinecap="round" opacity={nube} />
           {[0, 1, 2].map((i) => {
             const y = interpolate(f, [16 + i * 12, 46 + i * 12], [460, 190], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.back(1.4))});
-            const x = 370 + i * 105;
             return (
-              <g key={i} transform={`translate(${x},${y})`}>
-                <rect width={90} height={70} rx={12} fill={i === 1 ? C.naranja : C.azul} stroke={i === 1 ? C.naranja : C.brandInk} strokeWidth={4} />
-                {[22, 45, 68].map((lx) => <line key={lx} x1={lx} y1={14} x2={lx} y2={56} stroke={i === 1 ? C.onAccent : C.brandInk} strokeWidth={4} strokeLinecap="round" />)}
+              <g key={i} transform={`translate(${370 + i * 105},${y})`}>
+                <rect width={90} height={70} rx={12} fill={i === 1 ? C.naranja : C.azul} stroke={i === 1 ? C.naranja : '#c7d2fe'} strokeWidth={4} />
+                {[22, 45, 68].map((lx) => <line key={lx} x1={lx} y1={14} x2={lx} y2={56} stroke={i === 1 ? C.onAccent : '#c7d2fe'} strokeWidth={4} strokeLinecap="round" />)}
               </g>
             );
           })}
@@ -275,17 +331,14 @@ const Nube: React.FC<{e: Escena}> = ({e}) => {
     </Zona>
   );
 };
-
 const IA: React.FC<{e: Escena}> = ({e}) => {
   const a = useIn(10), b = useIn(40), c = useIn(110, 9);
   return (
     <Zona>
       <Titulo e={e} />
       <div style={{display: 'flex', flexDirection: 'column', gap: 28}}>
-        <div style={{alignSelf: 'flex-end', maxWidth: 720, font: `600 40px/1.3 ${F.body}`, color: C.onAccent, background: C.naranja, padding: '26px 34px', borderRadius: '32px 32px 8px 32px', opacity: a, transform: `translateY(${(1 - a) * 40}px)`}}>
-          Haceme una función que valide un correo
-        </div>
-        <div style={{alignSelf: 'flex-start', width: 800, background: C.alt, border: `3px solid ${C.line}`, padding: '28px 34px', borderRadius: '32px 32px 32px 8px', font: `500 34px/1.55 ${F.mono}`, color: C.ink, opacity: b, transform: `translateY(${(1 - b) * 40}px)`, position: 'relative'}}>
+        <div style={{alignSelf: 'flex-end', maxWidth: 720, font: `600 40px/1.3 ${F.body}`, color: C.onAccent, background: C.naranja, padding: '26px 34px', borderRadius: '32px 32px 8px 32px', opacity: a, transform: `translateY(${(1 - a) * 40}px)`}}>Haceme una función que valide un correo</div>
+        <div style={{alignSelf: 'flex-start', width: 800, background: T.codeBg, border: borde(), padding: '28px 34px', borderRadius: '32px 32px 32px 8px', font: `500 34px/1.55 ${F.mono}`, color: T.codeInk, opacity: b, transform: `translateY(${(1 - b) * 40}px)`, position: 'relative'}}>
           <div style={{whiteSpace: 'pre'}}><Typed start={46} cps={40} text={'import re\ndef es_correo(t):\n  return re.match(r".+@.+\\..+", t)'} /></div>
           <div style={{position: 'absolute', right: -24, bottom: -40, font: `700 38px/1 ${F.body}`, color: C.onAccent, background: C.ok, padding: '16px 26px', borderRadius: 999, transform: `scale(${c}) rotate(-4deg)`}}>✓ entendé cada línea</div>
         </div>
@@ -295,78 +348,184 @@ const IA: React.FC<{e: Escena}> = ({e}) => {
   );
 };
 
-const Proyectos: React.FC<{e: Escena}> = ({e}) => {
+// ---------- formato checklist (y "lo que más me ayudó") ----------
+const Checklist: React.FC<{e: Escena}> = ({e}) => {
   const f = useCurrentFrame();
+  const items = e.items ?? e.claves ?? [];
+  const tam = items.length > 3 ? 56 : 76;
   return (
     <Zona>
-      <div style={{font: `600 52px/1 ${F.display}`, color: C.accentInk, opacity: useIn(0)}}>Y lo que más me hubiera ayudado</div>
-      {e.claves!.map((c, i) => {
-        const st = 14 + i * 22;
-        const k = useIn(st);
-        const check = interpolate(f, [st + 18, st + 30], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-        return (
-          <div key={c} style={{display: 'flex', alignItems: 'center', gap: 40, background: C.alt, border: `3px solid ${check > 0.5 ? C.naranja : C.line}`, borderRadius: 32, padding: '48px 44px', opacity: k, transform: `translateX(${(1 - k) * -100}px)`}}>
-            <svg width={110} height={110} viewBox="0 0 110 110" style={{flex: 'none'}}>
-              <rect x={6} y={6} width={98} height={98} rx={26} fill={check > 0.5 ? C.naranja : 'none'} stroke={C.naranja} strokeWidth={8} />
-              <path d="M30 57 l17 17 l34 -36" fill="none" stroke={C.onAccent} strokeWidth={11} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={90} strokeDashoffset={90 * (1 - check)} />
-            </svg>
-            <span style={{font: `700 80px/1 ${F.display}`, color: C.ink}}>{c}</span>
-          </div>
-        );
-      })}
-      <div style={{position: 'relative', height: 120}}><Star x={760} y={10} s={90} delay={60} /><Star x={880} y={70} s={50} delay={66} /></div>
+      <div style={{font: `700 ${Math.round(64 * T.escala)}px/1.05 ${T.titleFont}`, color: T.ink}}><Rich t={e.titulo} /></div>
+      <div style={{display: 'flex', flexDirection: 'column', gap: items.length > 3 ? 24 : 40}}>
+        {items.map((c, i) => {
+          const st = 14 + i * 22;
+          const check = interpolate(f, [st + 18, st + 30], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+          const k = interpolate(f, [st, st + 14], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)});
+          return (
+            <div key={c} style={{display: 'flex', alignItems: 'center', gap: 36, background: T.card, border: borde(check > 0.5 ? C.naranja : T.line), borderRadius: T.radius, boxShadow: T.shadow, padding: items.length > 3 ? '30px 36px' : '48px 44px', opacity: k, transform: `translateX(${(1 - k) * -100}px)`}}>
+              <svg width={96} height={96} viewBox="0 0 110 110" style={{flex: 'none'}}>
+                <rect x={6} y={6} width={98} height={98} rx={26} fill={check > 0.5 ? C.naranja : 'none'} stroke={C.naranja} strokeWidth={8} />
+                <path d="M30 57 l17 17 l34 -36" fill="none" stroke={C.onAccent} strokeWidth={11} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={90} strokeDashoffset={90 * (1 - check)} />
+              </svg>
+              <span style={{font: `700 ${tam}px/1.05 ${T.titleFont}`, color: T.ink}}>{c}</span>
+            </div>
+          );
+        })}
+      </div>
     </Zona>
   );
 };
 
-const Cta: React.FC<{e: Escena}> = () => {
+// ---------- formato mito vs. realidad ----------
+const Mito: React.FC<{e: Escena}> = ({e}) => (
+  <Zona>
+    <div style={{font: `700 40px/1 ${F.body}`, letterSpacing: '0.1em', color: T.muted}}>LO QUE TODOS DICEN</div>
+    <Card delay={4} style={{padding: '60px 52px'}}>
+      <div style={{font: `700 ${Math.round(76 * T.escala)}px/1.05 ${T.titleFont}`, color: T.ink}}>“<Rich t={e.titulo} />”</div>
+    </Card>
+    <div style={{display: 'flex', justifyContent: 'flex-end', paddingRight: 40}}><Sello txt={e.veredicto ?? 'FALSO'} color={/VERDAD|CIERTO/i.test(e.veredicto ?? '') ? T.ok : T.error} delay={34} /></div>
+  </Zona>
+);
+const Realidad: React.FC<{e: Escena}> = ({e}) => (
+  <Zona>
+    <div style={{display: 'flex', alignItems: 'center', gap: 30}}><Icono ok /><div style={{font: `700 48px/1 ${F.body}`, letterSpacing: '0.1em', color: T.ok}}>{e.tipo === 'solucion' ? 'LA SOLUCIÓN' : 'LA REALIDAD'}</div></div>
+    <div style={{font: `700 ${Math.round(84 * T.escala)}px/1.02 ${T.titleFont}`, color: T.ink}}><Rich t={e.titulo} /></div>
+    <Texto t={e.texto} />
+    <Claves e={e} delay={30} />
+  </Zona>
+);
+// ---------- formato error → solución ----------
+const ErrorEsc: React.FC<{e: Escena}> = ({e}) => {
+  const f = useCurrentFrame();
+  const shake = f > 10 && f < 26 ? Math.sin(f * 2.4) * 10 : 0;
+  return (
+    <Zona>
+      <div style={{display: 'flex', alignItems: 'center', gap: 30, transform: `translateX(${shake}px)`}}><Icono ok={false} /><div style={{font: `700 48px/1 ${F.body}`, letterSpacing: '0.1em', color: T.error}}>EL ERROR</div></div>
+      <Card color={T.error} delay={6} style={{padding: '56px 52px'}}>
+        <div style={{font: `700 ${Math.round(80 * T.escala)}px/1.02 ${T.titleFont}`, color: T.ink}}><Rich t={e.titulo} /></div>
+      </Card>
+      <Texto t={e.texto} delay={20} />
+    </Zona>
+  );
+};
+
+// ---------- formato historia (línea de tiempo) ----------
+const Linea: React.FC<{e: Escena}> = ({e}) => {
+  const f = useCurrentFrame();
+  const k = useIn(4);
+  const h = interpolate(f, [0, 40], [0, 760], {extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)});
+  return (
+    <Zona>
+      <div style={{display: 'flex', gap: 56}}>
+        <div style={{position: 'relative', width: 40, flex: 'none'}}>
+          <div style={{position: 'absolute', left: 16, top: 30, width: 8, height: h, background: T.line, borderRadius: 4}} />
+          <div style={{position: 'absolute', left: 0, top: 10, width: 40, height: 40, borderRadius: 20, background: C.naranja, transform: `scale(${k})`, boxShadow: `0 0 0 ${8 + 6 * Math.sin(f / 6)}px rgba(255,140,0,0.25)`}} />
+        </div>
+        <div style={{display: 'flex', flexDirection: 'column', gap: 40}}>
+          <div style={{font: `700 120px/1 ${F.mono}`, color: T.hi, opacity: k}}>{e.hora}</div>
+          <div style={{font: `700 ${Math.round(80 * T.escala)}px/1.04 ${T.titleFont}`, color: T.ink}}><Rich t={e.titulo} /></div>
+          <Texto t={e.texto} delay={18} />
+        </div>
+      </div>
+    </Zona>
+  );
+};
+
+// ---------- formato A vs. B ----------
+const Versus: React.FC<{e: Escena}> = ({e}) => {
+  const vs = useIn(16, 8);
+  const col = (lado: {nombre: string; puntos: string[]} | undefined, i: number) => {
+    const k = useIn(4 + i * 6);
+    return (
+      <div style={{flex: 1, minWidth: 0, background: i === 0 ? T.card : (T.estilo === 'blueprint' ? C.noche : C.azul), border: borde(i === 0 ? T.line : (T.estilo === 'blueprint' ? C.noche : C.azul)), borderRadius: T.radius, boxShadow: T.shadow, padding: '44px 34px', transform: `translateY(${(1 - k) * 100}px)`, opacity: k}}>
+        <div style={{font: `700 ${Math.round(54 * T.escala)}px/1 ${T.titleFont}`, color: i === 0 ? T.ink : '#ffffff', marginBottom: 34}}>{lado?.nombre}</div>
+        {lado?.puntos.map((p, j) => {
+          const kk = useIn(26 + j * 10 + i * 4);
+          return <div key={j} style={{font: `600 38px/1.25 ${F.body}`, color: i === 0 ? T.muted : '#c7d2fe', padding: '18px 0', borderTop: `2px solid ${i === 0 ? T.line : 'rgba(255,255,255,0.25)'}`, opacity: kk}}>{p}</div>;
+        })}
+      </div>
+    );
+  };
+  return (
+    <Zona>
+      <div style={{font: `700 ${Math.round(64 * T.escala)}px/1.05 ${T.titleFont}`, color: T.ink}}><Rich t={e.titulo} /></div>
+      <div style={{position: 'relative', display: 'flex', gap: 28}}>
+        {col(e.a, 0)}{col(e.b, 1)}
+        <div style={{position: 'absolute', left: '50%', top: '50%', width: 120, height: 120, marginLeft: -60, marginTop: -60, borderRadius: 65, background: C.naranja, color: C.onAccent, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `700 50px/1 ${F.display}`, boxShadow: '0 0 0 10px rgba(0,0,0,0.12)', transform: `scale(${vs})`}}>VS</div>
+      </div>
+    </Zona>
+  );
+};
+
+// ---------- formato cifra que impacta ----------
+const Cifra: React.FC<{e: Escena}> = ({e}) => {
+  const f = useCurrentFrame();
+  const v = e.valor ?? '';
+  const m = v.match(/^([\d.,]+)(.*)$/);
+  let mostrado = v;
+  if (m) {
+    const n = parseFloat(m[1].replace(',', '.'));
+    const dec = (m[1].split(/[.,]/)[1] ?? '').length;
+    const p = interpolate(f, [6, 40], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)});
+    mostrado = (n * p).toFixed(dec).replace('.', m[1].includes(',') ? ',' : '.') + m[2];
+  }
+  const k = useIn(2, 10);
+  const largo = v.length > 6;
+  return (
+    <Zona>
+      <div style={{font: `700 52px/1.1 ${F.body}`, color: T.muted}}><Rich t={e.texto ?? ''} color={T.accentInk} /></div>
+      <div style={{font: `700 ${largo ? 210 : 330}px/0.95 ${F.display}`, color: T.hi, letterSpacing: '-0.03em', transform: `scale(${0.8 + 0.2 * k})`, transformOrigin: 'left center', fontVariantNumeric: 'tabular-nums'}}>{mostrado}</div>
+      <div style={{font: `700 ${Math.round(76 * T.escala)}px/1.04 ${T.titleFont}`, color: T.ink}}><Rich t={e.titulo} /></div>
+      <div style={{position: 'relative', height: 80}}><Star x={820} y={0} s={80} delay={44} /></div>
+    </Zona>
+  );
+};
+
+// ---------- cierre ----------
+const Cta: React.FC<{e: Escena}> = ({e}) => {
   const a = useIn(0), b = useIn(10), c = useIn(22), d = useIn(34);
   return (
     <AbsoluteFill style={{background: C.azul}}>
       <div style={{position: 'absolute', top: 220, left: 72, right: 72, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 60, textAlign: 'center'}}>
         <Img src={staticFile('logo-horizontal-blanco.png')} style={{width: 760, opacity: a, transform: `scale(${0.9 + 0.1 * a})`}} />
-        <div style={{font: `700 92px/1 ${F.display}`, color: '#fff', opacity: b, transform: `translateY(${(1 - b) * 40}px)`}}>Cursos de cloud, software e <span style={{color: C.naranja}}>IA</span></div>
+        <div style={{font: `700 92px/1 ${F.display}`, color: '#fff', opacity: b, transform: `translateY(${(1 - b) * 40}px)`}}><Rich t={e.titulo || 'Cursos de cloud, software e *IA*'} color={C.naranja} /></div>
         <div style={{background: C.naranja, color: C.onAccent, borderRadius: 32, padding: '40px 56px', opacity: c, transform: `scale(${c})`}}>
           <div style={{font: `700 40px/1 ${F.body}`}}>Escribinos por WhatsApp</div>
           <div style={{font: `700 84px/1.1 ${F.display}`, marginTop: 14}}>{WHATSAPP}</div>
         </div>
         <div style={{font: `500 40px/1.4 ${F.mono}`, color: '#fff', opacity: d}}>@cloudstation.sh · @gelopfalcon<br />cloudstation.sh</div>
       </div>
-      <Star x={110} y={1180} s={80} delay={30} />
-      <Star x={900} y={1100} s={60} delay={38} />
+      <Star x={110} y={1180} s={80} delay={30} /><Star x={900} y={1100} s={60} delay={38} />
     </AbsoluteFill>
   );
 };
 
-// Escena genérica para temas nuevos: título + claves + una estrella grande
-const Puntos: React.FC<{e: Escena}> = ({e}) => (
-  <Zona>
-    <Titulo e={e} />
-    <div style={{position: 'relative', height: 300}}><Star x={330} y={20} s={240} delay={10} /><Star x={620} y={180} s={90} delay={18} /></div>
-    <Claves e={e} delay={24} />
-  </Zona>
-);
-
-const MAPA: Record<string, React.FC<{e: Escena}>> = {puntos: Puntos, hook: Hook, codigo: Codigo, terminal: Terminal, web: Web, nube: Nube, ia: IA, proyectos: Proyectos, cta: Cta};
+const MAPA: Record<string, React.FC<{e: Escena}>> = {
+  hook: Hook, puntos: Puntos, codigo: Codigo, terminal: Terminal, web: Web, nube: Nube, ia: IA,
+  proyectos: Checklist, checklist: Checklist, mito: Mito, realidad: Realidad, solucion: Realidad, error: ErrorEsc,
+  linea: Linea, versus: Versus, cifra: Cifra, cta: Cta,
+};
+const TRANSICION = {espacio: () => slide({direction: 'from-right'}), terminal: () => wipe({direction: 'from-left'}), blueprint: () => slide({direction: 'from-bottom'}), tarjetas: () => slide({direction: 'from-right'})};
 
 export const Reel: React.FC<ReelProps> = (props) => {
+  setEstilo(props.estilo ?? ESTILO);
+  const g = escenasDe(props);
   const d = duraciones(props);
   return (
     <AbsoluteFill style={{fontFamily: F.body}}>
       <Fondo />
       <TransitionSeries>
-        {guion.flatMap((e, i) => {
+        {g.flatMap((e, i) => {
           const Comp = MAPA[e.tipo] ?? Puntos;
           const out = [<TransitionSeries.Sequence key={e.id} durationInFrames={d[i]}><Comp e={e} /></TransitionSeries.Sequence>];
-          if (i < guion.length - 1)
-            out.push(<TransitionSeries.Transition key={e.id + 't'} presentation={i === guion.length - 2 ? fade() : slide({direction: 'from-right'})} timing={linearTiming({durationInFrames: TRANS})} />);
+          if (i < g.length - 1)
+            out.push(<TransitionSeries.Transition key={e.id + 't'} presentation={(i === g.length - 2 ? fade() : TRANSICION[T.estilo]()) as any} timing={linearTiming({durationInFrames: TRANS})} />);
           return out;
         })}
       </TransitionSeries>
       <Header props={props} />
       <Subtitulos props={props} />
       {props.voz && <Audio src={staticFile(props.voz)} />}
-      {props.musica && <Audio src={staticFile(props.musica)} volume={(f) => (props.voz ? 0.12 : 0.35) * Math.min(1, f / 30)} />}
     </AbsoluteFill>
   );
 };

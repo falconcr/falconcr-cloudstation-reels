@@ -5,9 +5,11 @@
   {
    "id": "hook",
    "tipo": "hook",
-   "titulo": "Lo que estudiaría en software",
+   "titulo": "años: esto es lo que estudiaría en *software*",
    "voz": "Si volviera a tener 18 años, esto es lo que estudiaría para trabajar en software.",
-   "seg": 5
+   "seg": 5,
+   "grande": "18",
+   "texto": "Si volviera a tener"
   },
   {
    "id": "p1",
@@ -90,5 +92,7 @@
    "voz": "En Cloud Station damos cursos de cloud, software e IA. Escribinos por WhatsApp.",
    "seg": 5
   }
- ]
+ ],
+ "estilo": "espacio",
+ "formato": "lista"
 }
