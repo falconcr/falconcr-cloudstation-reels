@@ -481,6 +481,28 @@ const Cifra: React.FC<{e: Escena}> = ({e}) => {
   );
 };
 
+// ---------- pregunta para comentarios ----------
+const Pregunta: React.FC<{e: Escena}> = ({e}) => {
+  const k = useIn(2, 10);
+  return (
+    <Zona>
+      <div style={{font: `700 44px/1 ${F.body}`, letterSpacing: '0.1em', color: T.accentInk, opacity: k}}>COMENTÁ</div>
+      <div style={{font: `700 ${Math.round(84 * T.escala)}px/1.04 ${T.titleFont}`, color: T.ink}}><Rich t={e.titulo} /></div>
+      <div style={{display: 'flex', flexDirection: 'column', gap: 28}}>
+        {(e.items ?? []).map((it, i) => {
+          const kk = useIn(16 + i * 10);
+          return (
+            <div key={i} style={{display: 'flex', alignItems: 'center', gap: 32, background: T.card, border: borde(T.line), borderRadius: T.radius, boxShadow: T.shadow, padding: '30px 36px', opacity: kk, transform: `translateX(${(1 - kk) * 80}px)`}}>
+              <div style={{width: 96, height: 96, flex: 'none', borderRadius: 48, background: C.naranja, color: C.onAccent, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `700 56px/1 ${F.display}`}}>{String.fromCharCode(65 + i)}</div>
+              <div style={{font: `700 50px/1.1 ${F.body}`, color: T.ink, minWidth: 0}}>{it}</div>
+            </div>
+          );
+        })}
+      </div>
+    </Zona>
+  );
+};
+
 // ---------- cierre ----------
 const Cta: React.FC<{e: Escena}> = ({e}) => {
   const a = useIn(0), b = useIn(10), c = useIn(22), d = useIn(34);
@@ -503,7 +525,7 @@ const Cta: React.FC<{e: Escena}> = ({e}) => {
 const MAPA: Record<string, React.FC<{e: Escena}>> = {
   hook: Hook, puntos: Puntos, codigo: Codigo, terminal: Terminal, web: Web, nube: Nube, ia: IA,
   proyectos: Checklist, checklist: Checklist, mito: Mito, realidad: Realidad, solucion: Realidad, error: ErrorEsc,
-  linea: Linea, versus: Versus, cifra: Cifra, cta: Cta,
+  linea: Linea, versus: Versus, cifra: Cifra, pregunta: Pregunta, cta: Cta,
 };
 const TRANSICION = {espacio: () => slide({direction: 'from-right'}), terminal: () => wipe({direction: 'from-left'}), blueprint: () => slide({direction: 'from-bottom'}), tarjetas: () => slide({direction: 'from-right'})};
 

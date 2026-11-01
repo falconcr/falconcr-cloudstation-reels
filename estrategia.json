@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-29",
+ "actualizado": "2026-11-01",
  "nota": "La tarea mensual de tendencias actualiza este archivo. La tarea de guiones lo lee para elegir formato, estilo y gancho.",
  "rotacion_estilos": [
   "espacio",
@@ -15,12 +15,12 @@
  },
  "formatos": {
   "lista": {
-   "peso": 1,
+   "peso": 1.1,
    "escenas": "hook → puntos/codigo/terminal/web/nube/ia (numerados) → checklist opcional → cta",
    "uso": "roadmaps, '5 cosas que…'"
   },
   "mito": {
-   "peso": 1,
+   "peso": 1.2,
    "escenas": "hook → mito (veredicto FALSO/MITO) → realidad → puntos opcional → cta",
    "uso": "creencias comunes falsas"
   },
@@ -48,6 +48,16 @@
    "peso": 1,
    "escenas": "hook → checklist → puntos opcional → cta",
    "uso": "antes de migrar, lo que nadie te dice"
+  },
+  "reenviable": {
+   "peso": 1,
+   "escenas": "hook → cifra o error → solucion → pregunta opcional → cta",
+   "uso": "problemas de negocio que alguien le manda a quien decide: costos, caídas, riesgos. Compartidos por mensaje privado"
+  },
+  "dato-rapido": {
+   "peso": 1,
+   "escenas": "hook → cifra → pregunta opcional → cta",
+   "uso": "EXPERIMENTO noviembre: 1 de cada 3 guiones, 25 a 35 segundos (70 a 90 palabras). Es la única excepción a los 40 a 60 segundos"
   }
  },
  "ganchos": [
@@ -55,14 +65,17 @@
   "Cifra concreta en la primera frase: '99.9% son 8 horas caído al año'",
   "Afirmación polémica: 'Kubernetes no te va a ahorrar plata'",
   "Error en segunda persona: 'Estás dejando tu bucket público y no lo sabés'",
-  "Si volviera a empezar / lo que nadie te dice"
+  "Si volviera a empezar / lo que nadie te dice",
+  "Dirigido a un tercero: 'Mandale esto a quien paga la factura de la nube'"
  ],
  "reglas": [
-  "Gancho en los primeros 2 segundos, sin presentarse",
+  "Gancho en los primeros 2 segundos, sin presentarse; escena hook de máximo 4 segundos o 12 palabras",
+  "Segundo gancho entre los segundos 6 y 8 ('pero lo peor es…', una cifra o una vuelta): ahí se va la gente hoy",
+  "Decir en los primeros 5 segundos la frase que alguien buscaría (ej. 'factura de AWS', 'migrar a la nube')",
   "Algo cambia en pantalla cada 2 o 3 segundos",
   "Una idea por escena, frases cortas",
-  "Cierre con pregunta para comentarios en el texto del post",
-  "40 a 60 segundos"
+  "Antes del cta, escena pregunta con 2 o 3 opciones cuando el tema lo permita; en el texto del post pedir comentar concretamente (A, B o C), no solo preguntar",
+  "40 a 60 segundos (salvo el formato dato-rapido); medir con cronómetro: el texto leído suele salir más largo"
  ],
  "historial": [
   {

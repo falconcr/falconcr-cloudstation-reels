@@ -5,14 +5,14 @@ import type {Estilo} from './brand';
 
 export type Escena = {
   id: string;
-  // lista: hook, puntos, codigo, terminal, web, nube, ia, proyectos · mito/realidad · error/solucion · linea · versus · cifra · checklist · cta
+  // lista: hook, puntos, codigo, terminal, web, nube, ia, proyectos · mito/realidad · error/solucion · linea · versus · cifra · checklist · pregunta · cta
   tipo: string;
   numero?: number;
   titulo: string;           // *palabra* = resaltada en naranja
   texto?: string;           // bajada corta
   grande?: string;          // hook: número o palabra gigante
   claves?: string[];
-  items?: string[];         // checklist
+  items?: string[];         // checklist; pregunta: opciones A, B…
   veredicto?: string;       // mito: FALSO / MITO / VERDAD
   hora?: string;            // linea: "VIE 18:04"
   valor?: string;           // cifra: "8 h 45 min"
