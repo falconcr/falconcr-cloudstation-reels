@@ -70,6 +70,12 @@
    "tema": "Si volviera a tener 18: lo que estudiaría en software",
    "formato": "lista",
    "estilo": "espacio"
+  },
+  {
+   "fecha": "2026-11-03",
+   "tema": "Lift-and-shift: por qué tu migración salió más cara que el datacenter",
+   "formato": "error-solucion",
+   "estilo": "blueprint"
   }
  ]
 }
