@@ -1,0 +1,65 @@
+{
+ "serie": "MIGRACIÓN A LA NUBE",
+ "pilar": "CLOUD",
+ "estilo": "blueprint",
+ "formato": "error-solucion",
+ "escenas": [
+  {
+   "id": "hook",
+   "tipo": "hook",
+   "titulo": "Migraste para ahorrar y pagás *más*",
+   "texto": "Se llama lift-and-shift",
+   "voz": "Migraste a la nube para ahorrar, y la factura salió más cara que tu datacenter. Muchas veces el problema no es la nube: es copiar tus servidores tal cual.",
+   "seg": 9
+  },
+  {
+   "id": "error1",
+   "tipo": "error",
+   "numero": 1,
+   "titulo": "Copiaste cada servidor del *mismo tamaño*",
+   "texto": "Comprado para el peor día del año, pagado todos los meses.",
+   "voz": "Uno: copiaste cada servidor del mismo tamaño. Lo compraste pensando en el peor día del año, y ya estaba pagado. En la nube, esa capacidad de sobra la pagás todos los meses.",
+   "seg": 11
+  },
+  {
+   "id": "solucion1",
+   "tipo": "solucion",
+   "numero": 1,
+   "titulo": "Medí el uso real antes de migrar",
+   "claves": [
+    "Uso real",
+    "Tamaño justo"
+   ],
+   "voz": "Medí el uso real y escogé el tamaño que tu sistema de verdad necesita. Si después hace falta más, lo subís.",
+   "seg": 7
+  },
+  {
+   "id": "error2",
+   "tipo": "error",
+   "numero": 2,
+   "titulo": "Dejaste todo prendido *24/7*",
+   "texto": "En la nube cada hora se cobra, aunque nadie la use.",
+   "voz": "Dos: dejaste todo prendido las veinticuatro horas. En tu datacenter, apagar no ahorraba casi nada. En la nube, cada hora se cobra, aunque nadie esté usando el sistema.",
+   "seg": 10
+  },
+  {
+   "id": "solucion2",
+   "tipo": "solucion",
+   "numero": 2,
+   "titulo": "Apagá lo que nadie usa",
+   "claves": [
+    "Horarios",
+    "Autoescalado"
+   ],
+   "voz": "Apagá de noche los ambientes de prueba y usá autoescalado: que la capacidad suba cuando hay clientes y baje cuando no.",
+   "seg": 8
+  },
+  {
+   "id": "cta",
+   "tipo": "cta",
+   "titulo": "Diagnóstico gratuito de tu *migración*",
+   "voz": "En Cloud Station revisamos tu migración en un Diagnóstico gratuito. Escribinos por WhatsApp.",
+   "seg": 6
+  }
+ ]
+}
