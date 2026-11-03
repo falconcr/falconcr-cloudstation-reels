@@ -1,98 +1,65 @@
 {
- "serie": "SI TUVIERA 18",
- "pilar": "SOFTWARE",
+ "serie": "MIGRACIÓN A LA NUBE",
+ "pilar": "CLOUD",
+ "estilo": "blueprint",
+ "formato": "error-solucion",
  "escenas": [
   {
    "id": "hook",
    "tipo": "hook",
-   "titulo": "años: esto es lo que estudiaría en *software*",
-   "voz": "Si volviera a tener 18 años, esto es lo que estudiaría para trabajar en software.",
-   "seg": 5,
-   "grande": "18",
-   "texto": "Si volviera a tener"
+   "titulo": "Migraste para ahorrar y pagás *más*",
+   "texto": "Se llama lift-and-shift",
+   "voz": "Migraste a la nube para ahorrar, y la factura salió más cara que tu datacenter. Muchas veces el problema no es la nube: es copiar tus servidores tal cual.",
+   "seg": 9
   },
   {
-   "id": "p1",
-   "tipo": "codigo",
+   "id": "error1",
+   "tipo": "error",
    "numero": 1,
-   "titulo": "Un lenguaje, a fondo",
-   "claves": [
-    "Python",
-    "JavaScript",
-    "Lógica"
-   ],
-   "voz": "Uno: un solo lenguaje, a fondo. Python o JavaScript. Lógica, estructuras de datos y cómo resolver problemas.",
-   "seg": 6.5
+   "titulo": "Copiaste cada servidor del *mismo tamaño*",
+   "texto": "Comprado para el peor día del año, pagado todos los meses.",
+   "voz": "Uno: copiaste cada servidor del mismo tamaño. Lo compraste pensando en el peor día del año, y ya estaba pagado. En la nube, esa capacidad de sobra la pagás todos los meses.",
+   "seg": 11
   },
   {
-   "id": "p2",
-   "tipo": "terminal",
+   "id": "solucion1",
+   "tipo": "solucion",
+   "numero": 1,
+   "titulo": "Medí el uso real antes de migrar",
+   "claves": [
+    "Uso real",
+    "Tamaño justo"
+   ],
+   "voz": "Medí el uso real y escogé el tamaño que tu sistema de verdad necesita. Si después hace falta más, lo subís.",
+   "seg": 7
+  },
+  {
+   "id": "error2",
+   "tipo": "error",
    "numero": 2,
-   "titulo": "Git y la terminal",
-   "claves": [
-    "Git",
-    "Linux"
-   ],
-   "voz": "Dos: Git y la terminal de Linux. Todo equipo serio trabaja así desde el primer día.",
-   "seg": 6
+   "titulo": "Dejaste todo prendido *24/7*",
+   "texto": "En la nube cada hora se cobra, aunque nadie la use.",
+   "voz": "Dos: dejaste todo prendido las veinticuatro horas. En tu datacenter, apagar no ahorraba casi nada. En la nube, cada hora se cobra, aunque nadie esté usando el sistema.",
+   "seg": 10
   },
   {
-   "id": "p3",
-   "tipo": "web",
-   "numero": 3,
-   "titulo": "La web por dentro",
+   "id": "solucion2",
+   "tipo": "solucion",
+   "numero": 2,
+   "titulo": "Apagá lo que nadie usa",
    "claves": [
-    "HTTP",
-    "APIs",
-    "SQL"
+    "Horarios",
+    "Autoescalado"
    ],
-   "voz": "Tres: cómo funciona la web por dentro. HTTP, APIs y bases de datos con SQL.",
-   "seg": 5.5
-  },
-  {
-   "id": "p4",
-   "tipo": "nube",
-   "numero": 4,
-   "titulo": "Nube y contenedores",
-   "claves": [
-    "Docker",
-    "Kubernetes",
-    "AWS",
-    "Google Cloud"
-   ],
-   "voz": "Cuatro: la nube y los contenedores. Docker, una nube como AWS o Google Cloud, y poner tu app en producción.",
-   "seg": 7
-  },
-  {
-   "id": "p5",
-   "tipo": "ia",
-   "numero": 5,
-   "titulo": "IA como herramienta",
-   "claves": [
-    "No como muleta"
-   ],
-   "voz": "Cinco: IA como herramienta, no como muleta. Usala para programar más rápido, pero entendé cada línea que te da.",
-   "seg": 7
-  },
-  {
-   "id": "extra",
-   "tipo": "proyectos",
-   "titulo": "Lo que más me hubiera ayudado",
-   "claves": [
-    "Proyectos reales",
-    "Inglés técnico"
-   ],
-   "voz": "Y lo que más me hubiera ayudado: construir proyectos reales y aprender inglés técnico.",
-   "seg": 5.5
+   "voz": "Apagá de noche los ambientes de prueba y usá autoescalado: que la capacidad suba cuando hay clientes y baje cuando no.",
+   "seg": 8
   },
   {
    "id": "cta",
    "tipo": "cta",
-   "titulo": "Cursos de cloud, software e IA",
-   "voz": "En Cloud Station damos cursos de cloud, software e IA. Escribinos por WhatsApp.",
-   "seg": 5
+   "titulo": "Diagnóstico gratuito de tu *migración*",
+   "voz": "En Cloud Station revisamos tu migración en un Diagnóstico gratuito. Escribinos por WhatsApp.",
+   "seg": 6
   }
- ],
- "estilo": "espacio",
- "formato": "lista"
+ ]
 }
