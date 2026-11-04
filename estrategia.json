@@ -89,6 +89,12 @@
    "tema": "Lift-and-shift: por qué tu migración salió más cara que el datacenter",
    "formato": "error-solucion",
    "estilo": "blueprint"
+  },
+  {
+   "fecha": "2026-11-06",
+   "tema": "89% de las empresas recortó planes de IA por los tokens: cuánto cuesta de verdad",
+   "formato": "dato-rapido",
+   "estilo": "tarjetas"
   }
  ]
 }
