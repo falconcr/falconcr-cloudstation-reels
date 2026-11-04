@@ -1,0 +1,53 @@
+{
+ "serie": "EL PUENTE CON LA IA",
+ "pilar": "IA",
+ "estilo": "tarjetas",
+ "formato": "dato-rapido",
+ "escenas": [
+  {
+   "id": "hook",
+   "tipo": "hook",
+   "titulo": "Cada texto que tu IA lee se *cobra*",
+   "texto": "El costo de la IA se llama tokens",
+   "voz": "Cada texto que tu IA lee y escribe se cobra. Son tokens.",
+   "seg": 4
+  },
+  {
+   "id": "cifra1",
+   "tipo": "cifra",
+   "valor": "89%",
+   "texto": "de las empresas, según Cloudera",
+   "titulo": "recortó o rediseñó sus planes de IA por los *tokens*",
+   "voz": "Un informe de Cloudera dice que ochenta y nueve por ciento de las empresas recortó o rediseñó sus planes de IA este año por ese costo.",
+   "seg": 10
+  },
+  {
+   "id": "cifra2",
+   "tipo": "cifra",
+   "valor": "27%",
+   "texto": "Solo el",
+   "titulo": "mide ese costo con mucha *precisión*",
+   "voz": "Y solo veintisiete por ciento dice que mide ese costo con mucha precisión.",
+   "seg": 5
+  },
+  {
+   "id": "pregunta",
+   "tipo": "pregunta",
+   "titulo": "¿Sabés cuánto te cuesta *tu* IA?",
+   "items": [
+    "Sí, al centavo",
+    "Más o menos",
+    "Ni idea"
+   ],
+   "voz": "¿Vos sabés cuánto te cuesta tu IA? Comentá A, B o C.",
+   "seg": 5
+  },
+  {
+   "id": "cta",
+   "tipo": "cta",
+   "titulo": "Diagnóstico gratuito del costo de tu *IA*",
+   "voz": "En Cloud Station calculamos el costo de tu IA en un Diagnóstico gratuito. Escribinos por WhatsApp.",
+   "seg": 6
+  }
+ ]
+}
