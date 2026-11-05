@@ -39,15 +39,15 @@
     "Más o menos",
     "Ni idea"
    ],
-   "voz": "¿Vos sabés cuánto te cuesta tu IA? Comentá A, B o C.",
+   "voz": "¿Vos sabés cuánto te cuesta tu IA? Dejá tu opinión: A, B o C.",
    "seg": 5
   },
   {
    "id": "cta",
    "tipo": "cta",
-   "titulo": "Diagnóstico gratuito del costo de tu *IA*",
-   "voz": "En Cloud Station calculamos el costo de tu IA en un Diagnóstico gratuito. Escribinos por WhatsApp.",
-   "seg": 6
+   "titulo": "Dejá tu *opinión*",
+   "voz": "En Cloud Station te damos más información. Escribinos por WhatsApp.",
+   "seg": 4
   }
  ]
 }
