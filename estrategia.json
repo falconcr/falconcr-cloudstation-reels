@@ -96,6 +96,12 @@
    "tema": "89% de las empresas recortó planes de IA por los tokens: cuánto cuesta de verdad",
    "formato": "dato-rapido",
    "estilo": "tarjetas"
+  },
+  {
+   "fecha": "2026-11-10",
+   "tema": "CI/CD explicado con una línea de producción de carros",
+   "formato": "lista",
+   "estilo": "terminal"
   }
  ]
 }
