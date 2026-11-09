@@ -382,9 +382,9 @@ const Web: React.FC<{e: Escena}> = ({e}) => {
           <line x1={135} y1={150} x2={795} y2={150} stroke={T.line} strokeWidth={8} strokeLinecap="round" strokeDasharray="4 22" />
           <circle cx={135 + p * 660} cy={150} r={20} fill={C.naranja} opacity={f > 30 ? 1 : 0} />
         </svg>
-        {['Navegador', 'API', 'Base de datos'].map((t, i) => <Node key={i} x={i * 330} label={t} delay={8 + i * 8} i={i} />)}
-        <span style={{position: 'absolute', left: 300, top: 96, transform: 'translateX(-50%)', font: `700 32px/1 ${F.mono}`, color: T.accentInk}}>HTTP</span>
-        <span style={{position: 'absolute', left: 630, top: 96, transform: 'translateX(-50%)', font: `700 32px/1 ${F.mono}`, color: T.accentInk}}>SQL</span>
+        {(e.nodos ?? ['Navegador', 'API', 'Base de datos']).slice(0, 3).map((t, i) => <Node key={i} x={i * 330} label={t} delay={8 + i * 8} i={i} />)}
+        <span style={{position: 'absolute', left: 300, top: 96, transform: 'translateX(-50%)', font: `700 32px/1 ${F.mono}`, color: T.accentInk}}>{(e.flechas ?? ['HTTP', 'SQL'])[0]}</span>
+        <span style={{position: 'absolute', left: 630, top: 96, transform: 'translateX(-50%)', font: `700 32px/1 ${F.mono}`, color: T.accentInk}}>{(e.flechas ?? ['HTTP', 'SQL'])[1]}</span>
       </div>
       <Claves e={e} delay={44} />
     </Zona>
@@ -409,7 +409,7 @@ const Nube: React.FC<{e: Escena}> = ({e}) => {
             );
           })}
         </svg>
-        <div style={{position: 'absolute', right: 20, bottom: 10, font: `700 40px/1 ${F.body}`, color: C.onAccent, background: C.ok, padding: '16px 28px', borderRadius: 999, transform: `scale(${ok})`}}>✓ en producción</div>
+        <div style={{position: 'absolute', right: 20, bottom: 10, font: `700 40px/1 ${F.body}`, color: C.onAccent, background: C.ok, padding: '16px 28px', borderRadius: 999, transform: `scale(${ok})`}}>{e.etiqueta ?? '✓ en producción'}</div>
       </div>
       <Claves e={e} delay={40} />
     </Zona>
@@ -421,10 +421,10 @@ const IA: React.FC<{e: Escena}> = ({e}) => {
     <Zona>
       <Titulo e={e} />
       <div style={{display: 'flex', flexDirection: 'column', gap: 28}}>
-        <div style={{alignSelf: 'flex-end', maxWidth: 720, font: `600 40px/1.3 ${F.body}`, color: C.onAccent, background: C.naranja, padding: '26px 34px', borderRadius: '32px 32px 8px 32px', opacity: a, transform: `translateY(${(1 - a) * 40}px)`}}>Haceme una función que valide un correo</div>
+        <div style={{alignSelf: 'flex-end', maxWidth: 720, font: `600 40px/1.3 ${F.body}`, color: C.onAccent, background: C.naranja, padding: '26px 34px', borderRadius: '32px 32px 8px 32px', opacity: a, transform: `translateY(${(1 - a) * 40}px)`}}>{e.prompt ?? 'Haceme una función que valide un correo'}</div>
         <div style={{alignSelf: 'flex-start', width: 800, background: T.codeBg, border: borde(), padding: '28px 34px', borderRadius: '32px 32px 32px 8px', font: `500 34px/1.55 ${F.mono}`, color: T.codeInk, opacity: b, transform: `translateY(${(1 - b) * 40}px)`, position: 'relative'}}>
-          <div style={{whiteSpace: 'pre'}}><Typed start={46} cps={40} text={'import re\ndef es_correo(t):\n  return re.match(r".+@.+\\..+", t)'} /></div>
-          <div style={{position: 'absolute', right: -24, bottom: -40, font: `700 38px/1 ${F.body}`, color: C.onAccent, background: C.ok, padding: '16px 26px', borderRadius: 999, transform: `scale(${c}) rotate(-4deg)`}}>✓ entendé cada línea</div>
+          <div style={{whiteSpace: 'pre'}}><Typed start={46} cps={40} text={e.lineas ? e.lineas.join('\n') : 'import re\ndef es_correo(t):\n  return re.match(r".+@.+\\..+", t)'} /></div>
+          <div style={{position: 'absolute', right: -24, bottom: -40, font: `700 38px/1 ${F.body}`, color: C.onAccent, background: C.ok, padding: '16px 26px', borderRadius: 999, transform: `scale(${c}) rotate(-4deg)`}}>{e.etiqueta ?? '✓ entendé cada línea'}</div>
         </div>
       </div>
       <div style={{marginTop: 30}}><Claves e={e} delay={70} /></div>

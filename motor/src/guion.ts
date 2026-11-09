@@ -14,6 +14,10 @@ export type Escena = {
   claves?: string[];
   items?: string[];
   lineas?: string[];        // codigo/terminal: lo que se ve en pantalla. Terminal: '$ comando' se escribe; '✓ …' sale en verde, '✗ …' / '■ …' en rojo         // checklist; pregunta: opciones A, B…
+  nodos?: string[];         // web: las 3 cajas (por defecto Navegador · API · Base de datos)
+  flechas?: string[];       // web: las 2 etiquetas entre cajas (por defecto HTTP · SQL)
+  etiqueta?: string;        // nube: insignia verde ('✓ en producción'); ia: sello ('✓ entendé cada línea')
+  prompt?: string;          // ia: lo que se le pide a la IA (ia usa también lineas para la respuesta)
   veredicto?: string;       // mito: FALSO / MITO / VERDAD
   hora?: string;            // linea: "VIE 18:04"
   valor?: string;           // cifra: "8 h 45 min"
