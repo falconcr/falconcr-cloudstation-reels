@@ -158,10 +158,12 @@ const Subtitulos: React.FC<{props: ReelProps}> = ({props}) => {
   const actual = grupos.find((x) => t >= x[0].s - 0.05 && t <= x[x.length - 1].e + 0.15);
   if (!actual) return null;
   // con video, el cierre lleva la tarjeta de WhatsApp en ese lugar
-  if (props.camara && g[Math.max(0, s.filter((x) => f >= x).length - 1)].tipo === 'cta') return null;
+  const iEsc = Math.max(0, s.filter((x) => f >= x).length - 1);
+  if (props.camara && g[iEsc].tipo === 'cta') return null;
+  const conRecuadro = !!props.camara && modoDe(g[iEsc], iEsc, g.length) === 'burbuja';
   const k = Math.min(1, (t - actual[0].s + 0.05) * 8);
   return (
-    <div style={{position: 'absolute', left: 60, right: 60, top: 1395, display: 'flex', justifyContent: 'center'}}>
+    <div style={{position: 'absolute', left: 60, right: conRecuadro ? 330 : 60, top: 1395, display: 'flex', justifyContent: 'center'}}>
       <div style={{font: `700 64px/1.15 ${F.body}`, textAlign: 'center', color: T.captionInk, background: T.captionBg, padding: '18px 34px', borderRadius: 24, transform: `scale(${0.92 + 0.08 * k})`}}>
         {actual.map((p, i) => (
           <span key={i} style={{color: t >= p.s ? (t <= p.e ? C.naranja : T.captionInk) : 'rgba(200,210,240,0.75)'}}>{p.w}{i < actual.length - 1 ? ' ' : ''}</span>
@@ -175,7 +177,8 @@ const Subtitulos: React.FC<{props: ReelProps}> = ({props}) => {
 // ---------- video de Gerardo (modo mixto) ----------
 // Por defecto: cara completa en la primera escena y en el cta; burbuja en el resto. Cada escena puede fijar `camara`.
 const modoDe = (e: Escena, i: number, n: number) => e.camara ?? (i === 0 || e.tipo === 'cta' ? 'completa' : 'burbuja');
-const BURBUJA = {x: 1080 - 56 - 340, y: 1525, s: 340, zoom: 2.3, fy: 0.42};
+// recuadro vertical 9:16 abajo a la derecha (antes era un círculo)
+const BURBUJA = {x: 1080 - 48 - 250, y: 1395, w: 250, h: 444, r: 26, zoom: 1.35, fy: 0.42};
 const Camara: React.FC<{props: ReelProps}> = ({props}) => {
   const f = useCurrentFrame();
   const g = escenasDe(props);
@@ -190,12 +193,12 @@ const Camara: React.FC<{props: ReelProps}> = ({props}) => {
   const m = val(prev) + (val(modos[idx]) - val(prev)) * t;
   const op = (prev === 'oculta' ? 0 : 1) + ((modos[idx] === 'oculta' ? 0 : 1) - (prev === 'oculta' ? 0 : 1)) * t;
   const L = (a: number, b: number) => a + (b - a) * m; // burbuja -> completa
-  const bx = L(BURBUJA.x, 0), by = L(BURBUJA.y, 0), bw = L(BURBUJA.s, 1080), bh = L(BURBUJA.s, 1920);
+  const bx = L(BURBUJA.x, 0), by = L(BURBUJA.y, 0), bw = L(BURBUJA.w, 1080), bh = L(BURBUJA.h, 1920);
   const zoom = L(BURBUJA.zoom, 1), fy = L(BURBUJA.fy, 0.5);
   const iw = bw * zoom, ih = iw * 16 / 9;
   return (
     <div style={{position: 'absolute', left: bx, top: by, width: bw, height: bh, overflow: 'hidden', opacity: op,
-      borderRadius: L(BURBUJA.s / 2, 0), border: m < 0.98 ? `${Math.round(8 * (1 - m))}px solid ${C.naranja}` : 'none', boxShadow: m < 0.98 ? '0 18px 50px rgba(0,0,0,0.45)' : 'none'}}>
+      borderRadius: L(BURBUJA.r, 0), border: m < 0.98 ? `${Math.round(6 * (1 - m))}px solid ${C.naranja}` : 'none', boxShadow: m < 0.98 ? '0 18px 50px rgba(0,0,0,0.45)' : 'none'}}>
       <OffthreadVideo src={staticFile(props.camara!)} muted style={{position: 'absolute', width: iw, height: ih, left: bw / 2 - iw / 2, top: bh / 2 - ih * fy}} />
       {/* degradados para que se lean el encabezado y los textos sobre la cara */}
       <AbsoluteFill style={{opacity: m, background: 'linear-gradient(180deg, rgba(5,10,28,0.65) 0, rgba(5,10,28,0) 22%, rgba(5,10,28,0) 52%, rgba(5,10,28,0.8) 100%)'}} />
