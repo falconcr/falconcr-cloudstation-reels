@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig, Easing, Audio, random} from 'remotion';
+import {AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig, Easing, Audio, OffthreadVideo, random} from 'remotion';
 import {TransitionSeries, linearTiming} from '@remotion/transitions';
 import {slide} from '@remotion/transitions/slide';
 import {fade} from '@remotion/transitions/fade';
@@ -8,7 +8,7 @@ import {C, F, FPS, TRANS, T, setEstilo, Estilo} from './brand';
 import {guion as guionBase, Escena, SERIE, PILAR, WHATSAPP, ESTILO} from './guion';
 
 type Palabra = {w: string; s: number; e: number};
-export type ReelProps = {voz?: string; estilo?: Estilo; escenas?: Escena[]; tiempos?: {inicio: number; fin: number; palabras?: Palabra[]}[]};
+export type ReelProps = {voz?: string; camara?: string; estilo?: Estilo; escenas?: Escena[]; tiempos?: {inicio: number; fin: number; palabras?: Palabra[]}[]};
 
 const escenasDe = (p: ReelProps) => p.escenas ?? guionBase;
 
@@ -157,6 +157,8 @@ const Subtitulos: React.FC<{props: ReelProps}> = ({props}) => {
   if (gr.length) grupos.push(gr);
   const actual = grupos.find((x) => t >= x[0].s - 0.05 && t <= x[x.length - 1].e + 0.15);
   if (!actual) return null;
+  // con video, el cierre lleva la tarjeta de WhatsApp en ese lugar
+  if (props.camara && g[Math.max(0, s.filter((x) => f >= x).length - 1)].tipo === 'cta') return null;
   const k = Math.min(1, (t - actual[0].s + 0.05) * 8);
   return (
     <div style={{position: 'absolute', left: 60, right: 60, top: 1395, display: 'flex', justifyContent: 'center'}}>
@@ -165,6 +167,72 @@ const Subtitulos: React.FC<{props: ReelProps}> = ({props}) => {
           <span key={i} style={{color: t >= p.s ? (t <= p.e ? C.naranja : T.captionInk) : 'rgba(200,210,240,0.75)'}}>{p.w}{i < actual.length - 1 ? ' ' : ''}</span>
         ))}
       </div>
+    </div>
+  );
+};
+
+
+// ---------- video de Gerardo (modo mixto) ----------
+// Por defecto: cara completa en la primera escena y en el cta; burbuja en el resto. Cada escena puede fijar `camara`.
+const modoDe = (e: Escena, i: number, n: number) => e.camara ?? (i === 0 || e.tipo === 'cta' ? 'completa' : 'burbuja');
+const BURBUJA = {x: 1080 - 56 - 340, y: 1525, s: 340, zoom: 2.3, fy: 0.42};
+const Camara: React.FC<{props: ReelProps}> = ({props}) => {
+  const f = useCurrentFrame();
+  const g = escenasDe(props);
+  const s = inicios(props);
+  const modos = g.map((e, i) => modoDe(e, i, g.length));
+  // m = 1 pantalla completa, 0 burbuja; o = opacidad (oculta)
+  const val = (md: string) => (md === 'completa' ? 1 : 0);
+  let idx = 0;
+  s.forEach((x, i) => { if (f >= x) idx = i; });
+  const prev = idx > 0 ? modos[idx - 1] : modos[0];
+  const t = idx > 0 ? interpolate(f, [s[idx], s[idx] + TRANS], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.cubic)}) : 1;
+  const m = val(prev) + (val(modos[idx]) - val(prev)) * t;
+  const op = (prev === 'oculta' ? 0 : 1) + ((modos[idx] === 'oculta' ? 0 : 1) - (prev === 'oculta' ? 0 : 1)) * t;
+  const L = (a: number, b: number) => a + (b - a) * m; // burbuja -> completa
+  const bx = L(BURBUJA.x, 0), by = L(BURBUJA.y, 0), bw = L(BURBUJA.s, 1080), bh = L(BURBUJA.s, 1920);
+  const zoom = L(BURBUJA.zoom, 1), fy = L(BURBUJA.fy, 0.5);
+  const iw = bw * zoom, ih = iw * 16 / 9;
+  return (
+    <div style={{position: 'absolute', left: bx, top: by, width: bw, height: bh, overflow: 'hidden', opacity: op,
+      borderRadius: L(BURBUJA.s / 2, 0), border: m < 0.98 ? `${Math.round(8 * (1 - m))}px solid ${C.naranja}` : 'none', boxShadow: m < 0.98 ? '0 18px 50px rgba(0,0,0,0.45)' : 'none'}}>
+      <OffthreadVideo src={staticFile(props.camara!)} muted style={{position: 'absolute', width: iw, height: ih, left: bw / 2 - iw / 2, top: bh / 2 - ih * fy}} />
+      {/* degradados para que se lean el encabezado y los textos sobre la cara */}
+      <AbsoluteFill style={{opacity: m, background: 'linear-gradient(180deg, rgba(5,10,28,0.65) 0, rgba(5,10,28,0) 22%, rgba(5,10,28,0) 52%, rgba(5,10,28,0.8) 100%)'}} />
+    </div>
+  );
+};
+// Título de la escena sobre la cara cuando va a pantalla completa
+const Rotulo: React.FC<{props: ReelProps}> = ({props}) => {
+  const f = useCurrentFrame();
+  const g = escenasDe(props);
+  const s = inicios(props);
+  const d = duraciones(props);
+  const {fps} = useVideoConfig();
+  let idx = 0;
+  s.forEach((x, i) => { if (f >= x) idx = i; });
+  const e = g[idx];
+  if (modoDe(e, idx, g.length) !== 'completa') return null;
+  const lf = f - s[idx];
+  const k = spring({frame: lf - 4, fps, config: {damping: 14, mass: 0.7}});
+  const sal = interpolate(lf, [d[idx] - TRANS - 6, d[idx] - TRANS + 4], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const o = Math.min(k, sal);
+  if (e.tipo === 'cta')
+    return (
+      <div style={{position: 'absolute', left: 72, right: 72, top: 1150, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, opacity: o, transform: `translateY(${(1 - k) * 60}px)`}}>
+        <Img src={staticFile('logo-horizontal-blanco.png')} style={{width: 520}} />
+        <div style={{background: C.naranja, color: C.onAccent, borderRadius: 28, padding: '26px 44px', textAlign: 'center'}}>
+          <div style={{font: `700 36px/1 ${F.body}`}}>Escribinos por WhatsApp</div>
+          <div style={{font: `700 76px/1.1 ${F.display}`, marginTop: 10}}>{WHATSAPP}</div>
+        </div>
+        <div style={{font: `500 34px/1 ${F.mono}`, color: '#fff'}}>@cloudstation.sh · @gelopfalcon</div>
+      </div>
+    );
+  return (
+    <div style={{position: 'absolute', left: 72, right: 72, top: 1000, opacity: o, transform: `translateY(${(1 - k) * 60}px)`}}>
+      <div style={{display: 'inline-block', background: 'rgba(5,10,28,0.85)', borderLeft: `12px solid ${C.naranja}`, borderRadius: 18, padding: '26px 36px',
+        font: `700 ${Math.round(70 * T.escala)}px/1.08 ${T.titleFont}`, color: '#fff', textWrap: 'balance' as any}}><Rich t={e.titulo} color={C.naranja} /></div>
+      {e.texto && <div style={{marginTop: 18, font: `700 46px/1.2 ${F.body}`, color: '#e6edff', textShadow: '0 2px 12px rgba(0,0,0,0.8)'}}>{e.texto}</div>}
     </div>
   );
 };
@@ -545,6 +613,8 @@ export const Reel: React.FC<ReelProps> = (props) => {
           return out;
         })}
       </TransitionSeries>
+      {props.camara && <Camara props={props} />}
+      {props.camara && <Rotulo props={props} />}
       <Header props={props} />
       <Subtitulos props={props} />
       {props.voz && <Audio src={staticFile(props.voz)} />}

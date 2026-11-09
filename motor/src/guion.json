@@ -1,46 +1,91 @@
 {
- "serie": "EL PUENTE CON LA IA",
- "pilar": "IA",
- "estilo": "tarjetas",
- "formato": "dato-rapido",
+ "serie": "DEVOPS SIN DOLOR",
+ "pilar": "SOFTWARE",
+ "estilo": "terminal",
+ "formato": "lista",
  "escenas": [
   {
    "id": "hook",
    "tipo": "hook",
-   "titulo": "Cada texto que tu IA lee se *cobra*",
-   "texto": "El costo de la IA se llama tokens",
-   "voz": "Cada texto que tu IA lee y escribe se cobra. Son tokens.",
+   "titulo": "¿Cruzás los dedos cada vez que *subís* un cambio?",
+   "texto": "Hay una forma mejor: CI/CD",
+   "voz": "¿Tu equipo cruza los dedos cada vez que sube a producción?",
    "seg": 4
   },
   {
-   "id": "cifra1",
-   "tipo": "cifra",
-   "valor": "89%",
-   "texto": "de las empresas, según Cloudera",
-   "titulo": "recortó o rediseñó sus planes de IA por los *tokens*",
-   "voz": "Un informe de Cloudera dice que ochenta y nueve por ciento de las empresas recortó o rediseñó sus planes de IA este año por ese costo.",
-   "seg": 10
+   "id": "giro",
+   "tipo": "puntos",
+   "titulo": "Una fábrica de carros *nunca* lo haría",
+   "texto": "Se llama CI/CD: una línea de producción para tu software",
+   "claves": [
+    "CI/CD",
+    "Línea de producción"
+   ],
+   "voz": "Una fábrica de carros nunca trabajaría así. En software, su idea se llama CI/CD.",
+   "seg": 6,
+   "camara": "completa"
   },
   {
-   "id": "cifra2",
-   "tipo": "cifra",
-   "valor": "27%",
-   "texto": "Solo el",
-   "titulo": "mide ese costo con mucha *precisión*",
-   "voz": "Y solo veintisiete por ciento dice que mide ese costo con mucha precisión.",
-   "seg": 5
+   "id": "p1",
+   "tipo": "codigo",
+   "numero": 1,
+   "titulo": "Cada pieza entra por la *misma puerta*",
+   "texto": "Todo cambio pasa por Git",
+   "claves": [
+    "Git",
+    "Nada por correo"
+   ],
+   "voz": "Uno: cada pieza entra por la misma puerta. Todo cambio de código pasa por Git, nunca por correo ni a mano.",
+   "seg": 7
+  },
+  {
+   "id": "p2",
+   "tipo": "terminal",
+   "numero": 2,
+   "titulo": "La línea *arma sola*",
+   "texto": "Compila y empaqueta sin nadie a mano",
+   "claves": [
+    "Build automático"
+   ],
+   "voz": "Dos: la línea arma sola. El sistema compila y empaqueta tu aplicación igual cada vez, no importa quién esté de turno.",
+   "seg": 7
+  },
+  {
+   "id": "p3",
+   "tipo": "terminal",
+   "numero": 3,
+   "titulo": "Control de calidad en *cada estación*",
+   "texto": "Si una prueba falla, la línea se detiene",
+   "claves": [
+    "Pruebas automáticas"
+   ],
+   "voz": "Tres: control de calidad en cada estación. Pruebas automáticas, y si una falla, la línea se detiene antes de que el error llegue a tu cliente.",
+   "seg": 8
+  },
+  {
+   "id": "p4",
+   "tipo": "nube",
+   "numero": 4,
+   "titulo": "Sale de la fábrica, con *reversa*",
+   "texto": "Desplegar es un clic; volver atrás, también",
+   "claves": [
+    "Despliegue",
+    "Rollback"
+   ],
+   "voz": "Cuatro: sale de la fábrica. Subir a producción es un clic, y si algo sale mal, volvés a la versión anterior en minutos.",
+   "seg": 7
   },
   {
    "id": "pregunta",
    "tipo": "pregunta",
-   "titulo": "¿Sabés cuánto te cuesta *tu* IA?",
+   "titulo": "¿Cómo sube cambios *tu* equipo?",
    "items": [
-    "Sí, al centavo",
-    "Más o menos",
-    "Ni idea"
+    "Automático",
+    "A mano con checklist",
+    "Cruzando los dedos"
    ],
-   "voz": "¿Vos sabés cuánto te cuesta tu IA? Dejá tu opinión: A, B o C.",
-   "seg": 5
+   "voz": "¿Y tu equipo cómo sube cambios? A, automático. B, a mano con checklist. C, cruzando los dedos. Dejá tu opinión.",
+   "seg": 7
   },
   {
    "id": "cta",

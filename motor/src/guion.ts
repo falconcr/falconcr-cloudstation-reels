@@ -18,6 +18,7 @@ export type Escena = {
   valor?: string;           // cifra: "8 h 45 min"
   a?: {nombre: string; puntos: string[]};  // versus
   b?: {nombre: string; puntos: string[]};
+  camara?: 'completa' | 'burbuja' | 'oculta'; // solo si hay video de Gerardo: completa = cara a pantalla completa
   voz: string;
   seg: number;
 };

@@ -2,3 +2,4 @@ node_modules/
 motor/out/
 motor/public/voz*.m4a
 motor/musica.mp3
+motor/public/cara*.mp4
