@@ -22,7 +22,8 @@
     "Línea de producción"
    ],
    "voz": "Una fábrica de carros nunca trabajaría así. En software, su idea se llama CI/CD.",
-   "seg": 6
+   "seg": 6,
+   "camara": "completa"
   },
   {
    "id": "p1",

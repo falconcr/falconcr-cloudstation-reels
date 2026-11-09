@@ -9,6 +9,7 @@ Tres tareas programadas siguen este manual (A: guion, B: video, C: tendencias). 
 | Repo (este) | `falconcr/falconcr-cloudstation-reels`, rama `main`. Videos en `AAAA/AAAA-MM-DD-<slug>.mp4`, guiones en `guiones/AAAA-MM-DD.json` |
 | Link público del video | `https://raw.githubusercontent.com/falconcr/falconcr-cloudstation-reels/main/<ruta del mp4>` |
 | Calendario de ideas | Artifact `https://claude.ai/artifact/1wwmZfXG3GS9qNynxzoH84`, base de datos, colección `videos` (campos `tema, notas, serie, n, estado, fecha, formatos, prioridad`; estados `idea → guion → grabado → editado → publicado`) |
+| Release `crudos` del repo | videos de Gerardo hablando (`AAAA-MM-DD.mov` o `.mp4`), un solo release para todos; él agrega cada archivo con *Edit release*. Se bajan con `curl -sSL <browser_download_url>` (`get_release_by_tag`, tag `crudos`). Drive no sirve para video: el conector baja máximo 10 MB |
 | Drive `Cloud Station/Voces` | carpeta `1sRAL12Mm_tRx4D265i2AsG3nAx34VGXo`. Nota de voz con la fecha del video en el nombre: `AAAA-MM-DD.m4a` (o .mp3/.ogg/.wav) |
 | Drive `Cloud Station/Musica` | carpeta `1rKTsmJJejHDkypMpIF08EDL21WAsth0a` (pistas libres de Pixabay; rotarlas) |
 | Metricool | marca Cloudstation, `blogId` `7116505`. Redes: instagram, facebook, youtube, tiktok |
@@ -27,22 +28,33 @@ Voz: español centroamericano de vos ("escribinos", "migrá"). Para gente con pr
    - **formato**: el que mejor encaje con el tema, a igualdad de encaje el de mayor `peso`; no repitas el formato del último guion.
    - **estilo**: el siguiente de `rotacion_estilos` después del estilo del último guion (saltá uno si `estilo_por_tema` indica claramente otro para este tema, pero no repitas el del último).
    - **gancho**: uno de los patrones de `ganchos`, adaptado al tema.
-5. Escribí el guion siguiendo las `reglas` de `estrategia.json`: 40 a 60 segundos leído (110 a 150 palabras), cierre siempre: pedir que deje su opinión y "En Cloud Station te damos más información. Escribinos por WhatsApp." (sin Diagnóstico gratuito) Guardalo como `guiones/<fecha>.json` con la forma de `motor/src/guion.json`: `serie`, `pilar` (CLOUD/SOFTWARE/IA), `estilo`, `formato`, `escenas`. Campos de escena en `motor/src/guion.ts` (`*palabra*` resalta en naranja). Tipos de escena: `hook` (con `grande` opcional), `puntos`, `codigo`, `terminal`, `web`, `nube`, `ia`, `checklist` (`items`), `mito` (`veredicto`), `realidad`, `error`, `solucion`, `linea` (`hora`), `versus` (`a`, `b`), `cifra` (`valor`), `pregunta` (`items`: 2 o 3 opciones), `cta`. Ejemplo de cada uno en `motor/muestra-escenas.json`; capturas en `muestras/`. Si el formato usa números ("Uno… Dos…"), poné `numero` en esas escenas.
-6. Commit y push al repo.
-7. En el calendario (`update` con `if_version`): `estado: "guion"`, `fecha: <fecha>`, `notas: "GUION LISTO, grabá y subí <fecha>.m4a a Drive/Cloud Station/Voces: <texto completo para leer>"`. Si el tema es nuevo, creá el documento con el siguiente id libre (`v43`, `v44`…).
-8. Agregá al final de `historial` en `estrategia.json`: `{"fecha", "tema", "formato", "estilo"}` (la Tarea C lo cruza con las métricas). Commit y push.
-9. Notificá a Gerardo (push) en una línea: tema + formato + que el guion está en el calendario.
+5. Si una escena funciona mejor con Gerardo a cámara (la que sigue al gancho, una opinión personal), poné `"camara": "completa"` en esa escena; por defecto solo la primera y el `cta` van con la cara completa.
+6. Escribí el guion siguiendo las `reglas` de `estrategia.json`: 40 a 60 segundos leído (110 a 150 palabras), cierre siempre: pedir que deje su opinión y "En Cloud Station te damos más información. Escribinos por WhatsApp." (sin Diagnóstico gratuito) Guardalo como `guiones/<fecha>.json` con la forma de `motor/src/guion.json`: `serie`, `pilar` (CLOUD/SOFTWARE/IA), `estilo`, `formato`, `escenas`. Campos de escena en `motor/src/guion.ts` (`*palabra*` resalta en naranja). Tipos de escena: `hook` (con `grande` opcional), `puntos`, `codigo`, `terminal`, `web`, `nube`, `ia`, `checklist` (`items`), `mito` (`veredicto`), `realidad`, `error`, `solucion`, `linea` (`hora`), `versus` (`a`, `b`), `cifra` (`valor`), `pregunta` (`items`: 2 o 3 opciones), `cta`. Ejemplo de cada uno en `motor/muestra-escenas.json`; capturas en `muestras/`. Si el formato usa números ("Uno… Dos…"), poné `numero` en esas escenas.
+7. Commit y push al repo.
+8. En el calendario (`update` con `if_version`): `estado: "guion"`, `fecha: <fecha>`, `notas: "GUION LISTO, grabá en video y agregalo como <fecha>.mov al release Crudos del repo (o solo audio: <fecha>.m4a a Drive/Cloud Station/Voces): <texto completo para leer>"`. Si el tema es nuevo, creá el documento con el siguiente id libre (`v43`, `v44`…).
+9. Agregá al final de `historial` en `estrategia.json`: `{"fecha", "tema", "formato", "estilo"}` (la Tarea C lo cruza con las métricas). Commit y push.
+10. Notificá a Gerardo (push) en una línea: tema + formato + que el guion está en el calendario.
 
 ## Tarea B: video (martes y viernes, varias veces al día)
 
 1. Fecha = hoy (Costa Rica). Si ya existe un mp4 de esa fecha en el repo, terminá: ya se hizo.
-2. Buscá en Drive `Voces` un archivo cuyo nombre empiece con la fecha. Si no está: en la última corrida del día (la de las 16:xx) avisale a Gerardo que falta la nota de voz y terminá; en las demás, terminá sin avisar.
+2. Buscá la grabación de la fecha, en este orden:
+   - **Video** (modo mixto): en el release `crudos` (`get_release_by_tag`), un archivo cuyo nombre empiece con la fecha.
+   - **Audio**: en Drive `Voces`, un archivo cuyo nombre empiece con la fecha.
+   Si no hay ninguno: en la última corrida del día (la de las 16:xx) avisale a Gerardo que falta la grabación y terminá; en las demás, terminá sin avisar.
 3. Preparar el entorno (una vez por sesión):
    ```bash
    cd motor && npm ci && pip install --break-system-packages -q faster-whisper
    ```
    Chromium ya viene instalado en `/opt/pw-browsers/...` (ruta en `render.mjs`; si cambió, buscá `chrome` con `node -e "console.log(require('playwright').chromium.executablePath())"`).
-4. Bajá la voz con `download_file_content` (el resultado se guarda en un archivo JSON; decodificá `content` de base64) a `motor/public/voz.m4a`. Bajá una pista de `Musica` (rotá: no repitas la del video anterior) a `motor/musica.mp3`.
+4. **Audio:** bajá la voz con `download_file_content` (el resultado se guarda en un archivo JSON; decodificá `content` de base64) a `motor/public/voz.m4a`.
+   **Video:** bajalo con `curl -sSL` fuera del repo y convertilo (los .MOV del iPhone vienen en HEVC, que Chromium no lee):
+   ```bash
+   ffmpeg -y -i <crudo> -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 -an -movflags +faststart public/cara.mp4
+   ffmpeg -y -i <crudo> -vn -c:a aac -b:a 192k public/voz.m4a
+   ```
+   `cara.mp4` está en `.gitignore`: el crudo nunca se sube al repo.
+   Bajá una pista de `Musica` (rotá: no repitas la del video anterior) a `motor/musica.mp3`.
 5. Copiá `guiones/<fecha>.json` a `motor/src/guion.json` (el `estilo` del guion decide el look). Si un tipo de escena no existe, agregalo en `Reel.tsx` usando solo los tokens de `brand.ts` (`T` = tema activo, `C` = colores fijos).
 6. Transcribí y alineá:
    ```bash
@@ -50,6 +62,7 @@ Voz: español centroamericano de vos ("escribinos", "migrá"). Para gente con pr
    python3 tiempos.py out/palabras.json public/voz.m4a src/guion.json out/props.json
    ```
    Si lo que dijo agrega una herramienta o idea que no está en `claves`, agregala al guion antes de renderizar.
+   **Video:** agregá `"camara": "cara.mp4"` a `out/props.json`. Modo mixto: cara a pantalla completa en la primera escena y en el `cta` (con la tarjeta de WhatsApp encima), y en el resto los gráficos con Gerardo en un recuadro vertical abajo a la derecha. Una escena puede fijar `"camara": "completa" | "burbuja" | "oculta"` en el guion. En la revisión de cuadros del paso 7, fijate que los textos no le tapen la cara.
 7. Revisá antes del render completo: `node render.mjs out/f out/props.json --frames <un frame por escena>` y mirá los cuadros (textos cortados, cosas encimadas).
 8. Render (unos 12 minutos con 2 núcleos; correlo en segundo plano):
    ```bash
