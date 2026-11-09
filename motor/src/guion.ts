@@ -12,7 +12,8 @@ export type Escena = {
   texto?: string;           // bajada corta
   grande?: string;          // hook: número o palabra gigante
   claves?: string[];
-  items?: string[];         // checklist; pregunta: opciones A, B…
+  items?: string[];
+  lineas?: string[];        // codigo/terminal: lo que se ve en pantalla. Terminal: '$ comando' se escribe; '✓ …' sale en verde, '✗ …' / '■ …' en rojo         // checklist; pregunta: opciones A, B…
   veredicto?: string;       // mito: FALSO / MITO / VERDAD
   hora?: string;            // linea: "VIE 18:04"
   valor?: string;           // cifra: "8 h 45 min"

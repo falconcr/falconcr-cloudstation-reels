@@ -313,15 +313,23 @@ const Codigo: React.FC<{e: Escena}> = ({e}) => (
   <Zona>
     <Titulo e={e} />
     <Card style={{font: `500 40px/1.6 ${F.mono}`, color: T.codeInk, background: T.codeBg, minHeight: 360}}>
-      <div style={{color: '#8b97c2', marginBottom: 12}}># resolver un problema real</div>
-      <div style={{whiteSpace: 'pre'}}><Typed start={20} text={'def promedio(notas):\n    total = sum(notas)\n    return total / len(notas)\n\nprint(promedio([8, 9, 10]))'} /></div>
+      {(() => {
+        // lineas del guion: la primera, si empieza con # o //, va como comentario
+        const ls = e.lineas ?? ['# resolver un problema real', 'def promedio(notas):', '    total = sum(notas)', '    return total / len(notas)', '', 'print(promedio([8, 9, 10]))'];
+        const com = /^(#|\/\/)/.test(ls[0] ?? '') ? ls[0] : null;
+        const cuerpo = com ? ls.slice(1) : ls;
+        return <>
+          {com && <div style={{color: '#8b97c2', marginBottom: 12}}>{com}</div>}
+          <div style={{whiteSpace: 'pre'}}><Typed start={20} text={cuerpo.join('\n')} /></div>
+        </>;
+      })()}
     </Card>
     <Claves e={e} delay={40} />
   </Zona>
 );
 const Terminal: React.FC<{e: Escena}> = ({e}) => {
   const f = useCurrentFrame();
-  const lines = ['git init', 'git add .', 'git commit -m "primer proyecto"', 'git push origin main'];
+  const lines = e.lineas ?? ['$ git init', '$ git add .', '$ git commit -m "primer proyecto"', '$ git push origin main'];
   return (
     <Zona>
       <Titulo e={e} />
@@ -334,7 +342,12 @@ const Terminal: React.FC<{e: Escena}> = ({e}) => {
           {lines.map((l, i) => {
             const st = 18 + i * 26;
             if (f < st) return null;
-            return <div key={i}><span style={{color: C.ok}}>$ </span>{f < st + 24 ? <Typed start={st} text={l} cps={32} /> : l}</div>;
+            if (!l.startsWith('$ ')) {
+              const color = l.startsWith('✓') ? C.ok : /^[✗■]/.test(l) ? T.error : '#8b97c2';
+              return <div key={i} style={{color, opacity: Math.min(1, (f - st) / 6)}}>{l}</div>;
+            }
+            const cmd = l.slice(2);
+            return <div key={i}><span style={{color: C.ok}}>$ </span>{f < st + 24 ? <Typed start={st} text={cmd} cps={32} /> : cmd}</div>;
           })}
         </div>
       </Card>
