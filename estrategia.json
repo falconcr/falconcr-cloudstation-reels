@@ -103,6 +103,12 @@
    "tema": "CI/CD explicado con una línea de producción de carros",
    "formato": "lista",
    "estilo": "terminal"
+  },
+  {
+   "fecha": "2026-11-13",
+   "tema": "Monolito vs microservicios: cuándo cada uno es un error",
+   "formato": "versus",
+   "estilo": "blueprint"
   }
  ]
 }
