@@ -1,0 +1,112 @@
+{
+ "serie": "ARQUITECTO EN 60 SEGUNDOS",
+ "pilar": "SOFTWARE",
+ "estilo": "blueprint",
+ "formato": "versus",
+ "escenas": [
+  {
+   "id": "hook",
+   "tipo": "hook",
+   "titulo": "Los *microservicios* pueden hundir tu empresa",
+   "texto": "Monolito vs microservicios",
+   "voz": "Los microservicios pueden hundir tu empresa.",
+   "seg": 3
+  },
+  {
+   "id": "giro",
+   "tipo": "puntos",
+   "titulo": "Netflix sí. ¿Tu equipo de *cinco*?",
+   "texto": "Veinte servicios para cinco personas es un error",
+   "claves": [
+    "Miles de ingenieros",
+    "Equipo de 5"
+   ],
+   "voz": "Netflix los usa, pero tiene miles de ingenieros. Con un equipo de cinco, partir tu app en veinte servicios es un error.",
+   "seg": 8,
+   "camara": "completa"
+  },
+  {
+   "id": "versus",
+   "tipo": "versus",
+   "titulo": "¿Monolito o *microservicios*?",
+   "a": {
+    "nombre": "Monolito",
+    "puntos": [
+     "Una sola app",
+     "Un solo despliegue",
+     "Fácil de entender"
+    ]
+   },
+   "b": {
+    "nombre": "Microservicios",
+    "puntos": [
+     "Cada parte aparte",
+     "Escala por partes",
+     "Más piezas que cuidar"
+    ]
+   },
+   "voz": "Monolito: una sola aplicación, un solo despliegue, fácil de entender. Microservicios: cada parte por separado, escalan por partes, pero son más piezas que cuidar.",
+   "seg": 10
+  },
+  {
+   "id": "tienda",
+   "tipo": "web",
+   "titulo": "Tu tienda, en *tres* sistemas",
+   "texto": "Si uno falla, primero hay que encontrar cuál",
+   "nodos": [
+    "Carrito",
+    "Pagos",
+    "Inventario"
+   ],
+   "flechas": [
+    "HTTP",
+    "evento"
+   ],
+   "voz": "En una tienda en línea, el carrito, los pagos y el inventario son sistemas distintos que se hablan por la red. Si algo falla, primero tenés que encontrar cuál.",
+   "seg": 9
+  },
+  {
+   "id": "cuando-mono",
+   "tipo": "checklist",
+   "titulo": "Empezá con un *monolito* si…",
+   "items": [
+    "Tu equipo es pequeño",
+    "Estás validando el negocio",
+    "Cambiás de idea cada mes"
+   ],
+   "voz": "Empezá con un monolito si tu equipo es pequeño, estás validando el negocio o si cambiás de idea cada mes.",
+   "seg": 7
+  },
+  {
+   "id": "cuando-micro",
+   "tipo": "puntos",
+   "titulo": "Separá cuando *una parte* lo pide",
+   "texto": "Pagos en Black Friday, o equipos que se pisan al desplegar",
+   "claves": [
+    "Pagos x10 en Black Friday",
+    "Equipos que se pisan"
+   ],
+   "voz": "Separá cuando una parte necesita escalar sola, como los pagos en Black Friday, o cuando varios equipos se pisan al desplegar.",
+   "seg": 8
+  },
+  {
+   "id": "pregunta",
+   "tipo": "pregunta",
+   "titulo": "¿Qué tiene *tu* sistema?",
+   "items": [
+    "Monolito",
+    "Microservicios",
+    "Ni sé qué tenemos"
+   ],
+   "voz": "¿Y tu sistema qué es? A, monolito. B, microservicios. C, ni sé qué tenemos. Dejá tu opinión.",
+   "seg": 6
+  },
+  {
+   "id": "cta",
+   "tipo": "cta",
+   "titulo": "Dejá tu *opinión*",
+   "voz": "En Cloud Station te damos más información. Escribinos por WhatsApp.",
+   "seg": 4
+  }
+ ]
+}
