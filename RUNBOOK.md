@@ -14,14 +14,14 @@ Tres tareas programadas siguen este manual (A: guion, B: video, C: tendencias). 
 | Drive `Cloud Station/Musica` | carpeta `1rKTsmJJejHDkypMpIF08EDL21WAsth0a` (pistas libres de Pixabay; rotarlas) |
 | Metricool | marca Cloudstation, `blogId` `7116505`. Redes: instagram, facebook, youtube, tiktok |
 | WhatsApp de la empresa | **+506 8339 3375** (el único que se publica) |
-| Publicación | martes y viernes, 18:00 `America/Costa_Rica`, publicación automática |
+| Publicación | un reel por semana: martes, 18:00 `America/Costa_Rica`, publicación automática |
 | Marca | sistema de diseño `https://claude.ai/artifact/TEJrFhxafhnS7Mw2qp6A37`; tokens ya aplicados en `motor/src/brand.ts` |
 
 Voz: español centroamericano de vos ("escribinos", "migrá"). Para gente con problemas de negocio, no solo técnicos. Primero el problema, después la herramienta. Sin promesas vacías.
 
-## Tarea A: guion (domingo y miércoles)
+## Tarea A: guion (domingo)
 
-1. Calculá la fecha del próximo video: el domingo → el martes siguiente; el miércoles → el viernes siguiente.
+1. Calculá la fecha del próximo video: el martes siguiente.
 2. Si ya existe `guiones/<fecha>.json` en el repo, terminá sin hacer nada.
 3. Leé la colección `videos`. Elegí el tema: primero los de `prioridad: true` en estado `idea`; si no hay, el de estado `idea` cuya serie se haya publicado hace más tiempo (rotá series, no repitas la del último video). Si Gerardo dejó un tema con `fecha` igual a esa fecha, usá ese.
 4. Leé `estrategia.json`. Elegí:
@@ -41,7 +41,7 @@ Voz: español centroamericano de vos ("escribinos", "migrá"). Para gente con pr
 9. Agregá al final de `historial` en `estrategia.json`: `{"fecha", "tema", "formato", "estilo"}` (la Tarea C lo cruza con las métricas). Commit y push.
 10. Notificá a Gerardo (push) en una línea: tema + formato + que el guion está en el calendario.
 
-## Tarea B: video (martes y viernes, varias veces al día)
+## Tarea B: video (martes, a las 9:47, 12:47 y 16:47)
 
 1. Fecha = hoy (Costa Rica). Si ya existe un mp4 de esa fecha en el repo, terminá: ya se hizo.
 2. Buscá la grabación de la fecha, en este orden:
