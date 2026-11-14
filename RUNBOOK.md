@@ -1,6 +1,6 @@
 # Reels de Cloud Station: flujo automático
 
-Tres tareas programadas siguen este manual (A: guion, B: video, C: tendencias). La estrategia de formatos, estilos y ganchos vive en `estrategia.json`. Cada una arranca en una sesión nueva, sin memoria: todo lo necesario está aquí.
+Tres tareas programadas siguen este manual (A: guion, B: video, C: tendencias). La estrategia de formatos, estilos y ganchos vive en `estrategia.json`. Cada una arranca en una sesión nueva, sin memoria: todo lo necesario está aquí. Las tareas corren en la nube (no dependen de la compu de Gerardo); al empezar, agregá este repo con `add_repo` (acceso push) y clonalo.
 
 ## Datos fijos
 
@@ -9,7 +9,7 @@ Tres tareas programadas siguen este manual (A: guion, B: video, C: tendencias). 
 | Repo (este) | `falconcr/falconcr-cloudstation-reels`, rama `main`. Videos en `AAAA/AAAA-MM-DD-<slug>.mp4`, guiones en `guiones/AAAA-MM-DD.json` |
 | Link público del video | `https://raw.githubusercontent.com/falconcr/falconcr-cloudstation-reels/main/<ruta del mp4>` |
 | Calendario de ideas | Artifact `https://claude.ai/artifact/1wwmZfXG3GS9qNynxzoH84`, base de datos, colección `videos` (campos `tema, notas, serie, n, estado, fecha, formatos, prioridad`; estados `idea → guion → grabado → editado → publicado`) |
-| Release `crudos` del repo | videos de Gerardo hablando (`AAAA-MM-DD.mov` o `.mp4`), un solo release para todos; él agrega cada archivo con *Edit release*. Se bajan con `curl -sSL <browser_download_url>` (`get_release_by_tag`, tag `crudos`). Drive no sirve para video: el conector baja máximo 10 MB |
+| Release `crudos` del repo | videos de Gerardo hablando (`AAAA-MM-DD.mov` o `.mp4`), un solo release para todos; él agrega cada archivo con *Edit release*. Listalos con la API REST: `gh api repos/falconcr/falconcr-cloudstation-reels/releases/tags/crudos -q '.assets[]|[.name,.browser_download_url]|@tsv'` (si no hay `gh`, usá la herramienta de GitHub `get_release_by_tag`). **No uses `gh release view/list/download`**: usan GraphQL, que en estas sesiones responde 403. Bajá el archivo con `curl -sSL -o <destino> <browser_download_url>`. Drive no sirve para video: el conector baja máximo 10 MB |
 | Drive `Cloud Station/Voces` | carpeta `1sRAL12Mm_tRx4D265i2AsG3nAx34VGXo`. Nota de voz con la fecha del video en el nombre: `AAAA-MM-DD.m4a` (o .mp3/.ogg/.wav) |
 | Drive `Cloud Station/Musica` | carpeta `1rKTsmJJejHDkypMpIF08EDL21WAsth0a` (pistas libres de Pixabay; rotarlas) |
 | Metricool | marca Cloudstation, `blogId` `7116505`. Redes: instagram, facebook, youtube, tiktok |
@@ -45,9 +45,10 @@ Voz: español centroamericano de vos ("escribinos", "migrá"). Para gente con pr
 
 1. Fecha = hoy (Costa Rica). Si ya existe un mp4 de esa fecha en el repo, terminá: ya se hizo.
 2. Buscá la grabación de la fecha, en este orden:
-   - **Video** (modo mixto): en el release `crudos` (`get_release_by_tag`), un archivo cuyo nombre empiece con la fecha.
+   - **Video** (modo mixto): en el release `crudos`, un archivo cuyo nombre empiece con la fecha (comando en *Datos fijos*; el nombre puede venir en mayúsculas, `.MOV`).
    - **Audio**: en Drive `Voces`, un archivo cuyo nombre empiece con la fecha.
-   Si no hay ninguno: en la última corrida del día (la de las 16:xx) avisale a Gerardo que falta la grabación y terminá; en las demás, terminá sin avisar.
+   **Si la consulta al release o a Drive da error** (403, 404, sin acceso al repo, conector caído), eso no es "no hay grabación": avisale a Gerardo de inmediato con el error exacto y terminá.
+   Si las dos consultas funcionaron y no hay ninguna grabación: en la última corrida del día (la de las 16:xx) avisale a Gerardo que falta la grabación y terminá; en las demás, terminá sin avisar.
 3. Preparar el entorno (una vez por sesión):
    ```bash
    cd motor && npm ci && pip install --break-system-packages -q faster-whisper
@@ -76,7 +77,7 @@ Voz: español centroamericano de vos ("escribinos", "migrá"). Para gente con pr
    ./mezclar.sh out/voz.mp4 musica.mp3 out/final.mp4
    ```
 9. Copiá `out/final.mp4` a `AAAA/<fecha>-<slug>.mp4`, commit y push. Verificá que el link raw responda 200.
-10. Programá en Metricool (`createScheduledPost`, `blogId` 7116505, fecha `<fecha>T18:00:00-06:00`, `publicationDate.timezone` `America/Costa_Rica`, `autoPublish: true`):
+10. Programá en Metricool (`createScheduledPost`, `blogId` 7116505, fecha `<fecha>T18:00:00-06:00` (si ya pasaron las 18:00, 5 minutos después de ahora), `publicationDate.timezone` `America/Costa_Rica`, `autoPublish: true`):
     - `media`: el link raw; `videoCoverMilliseconds`: 3000
     - providers: instagram, facebook, youtube, tiktok
     - `instagramData`: `type: REEL`, collaborators `gelopfalcon`
