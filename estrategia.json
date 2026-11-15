@@ -109,6 +109,12 @@
    "tema": "Monolito vs microservicios: cuándo cada uno es un error",
    "formato": "versus",
    "estilo": "blueprint"
+  },
+  {
+   "fecha": "2026-11-17",
+   "tema": "Zonas vs regiones: el error que tumba apps enteras",
+   "formato": "error-solucion",
+   "estilo": "tarjetas"
   }
  ]
 }
