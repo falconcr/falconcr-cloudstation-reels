@@ -1,0 +1,94 @@
+{
+ "serie": "ALTA DISPONIBILIDAD",
+ "pilar": "CLOUD",
+ "estilo": "tarjetas",
+ "formato": "error-solucion",
+ "escenas": [
+  {
+   "id": "hook",
+   "tipo": "hook",
+   "titulo": "En la nube y se *cae* igual",
+   "texto": "Zona no es lo mismo que región",
+   "voz": "Tu app está en la nube y se cae igual: confundiste zona con región.",
+   "seg": 4
+  },
+  {
+   "id": "giro",
+   "tipo": "puntos",
+   "titulo": "Cayó una región, cayó *medio internet*",
+   "texto": "AWS us-east-1, octubre de 2025",
+   "claves": [
+    "Una región",
+    "Pagos, bancos y juegos",
+    "Horas caídos"
+   ],
+   "voz": "En octubre de 2025, una falla en una región de AWS tumbó pagos, bancos y juegos por horas. Y el error casi siempre es el mismo.",
+   "seg": 9,
+   "camara": "completa"
+  },
+  {
+   "id": "error1",
+   "tipo": "error",
+   "numero": 1,
+   "titulo": "Todo en *una sola zona*",
+   "texto": "Una zona es un datacenter. Si cae, tu tienda cae con él.",
+   "voz": "Uno: tenés todo en una sola zona. Una zona es un datacenter: si se queda sin luz, tu tienda se apaga.",
+   "seg": 8
+  },
+  {
+   "id": "solucion1",
+   "tipo": "solucion",
+   "numero": 1,
+   "titulo": "Repartí en *dos o tres zonas*",
+   "texto": "Si una falla, el balanceador manda a tus clientes a otra.",
+   "claves": [
+    "Servidores en 3 zonas",
+    "Base de datos multizona",
+    "Balanceador de carga"
+   ],
+   "voz": "Repartí servidores y base de datos en dos o tres zonas. Si una falla, el balanceador manda a tus clientes a otra.",
+   "seg": 9
+  },
+  {
+   "id": "error2",
+   "tipo": "error",
+   "numero": 2,
+   "titulo": "Creer que las zonas te salvan de *todo*",
+   "texto": "Si cae la región completa, caen todas sus zonas.",
+   "voz": "Dos: creer que las zonas te salvan de todo. Si cae la región, caen todas juntas.",
+   "seg": 7
+  },
+  {
+   "id": "solucion2",
+   "tipo": "solucion",
+   "numero": 2,
+   "titulo": "Lo crítico, en *otra región*",
+   "texto": "Pagos y facturación: copia lista en otra región.",
+   "claves": [
+    "Copia en otra región",
+    "Probá el cambio cada mes"
+   ],
+   "voz": "Lo que no puede parar, como los pagos, copialo en otra región. Y probá cada mes que el cambio funciona.",
+   "seg": 8
+  },
+  {
+   "id": "pregunta",
+   "tipo": "pregunta",
+   "titulo": "¿Dónde vive *tu* app?",
+   "items": [
+    "En una sola zona",
+    "En varias zonas",
+    "En varias regiones"
+   ],
+   "voz": "¿Tu app dónde vive? A, una zona. B, varias zonas. C, varias regiones. Dejá tu opinión.",
+   "seg": 6
+  },
+  {
+   "id": "cta",
+   "tipo": "cta",
+   "titulo": "Dejá tu *opinión*",
+   "voz": "En Cloud Station te damos más información. Escribinos por WhatsApp.",
+   "seg": 4
+  }
+ ]
+}
