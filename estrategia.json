@@ -115,6 +115,12 @@
    "tema": "Zonas vs regiones: el error que tumba apps enteras",
    "formato": "error-solucion",
    "estilo": "tarjetas"
+  },
+  {
+   "fecha": "2026-11-24",
+   "tema": "Spot/Preemptible VMs: hasta 90% más baratas, y cuándo te destruyen la app",
+   "formato": "cifra",
+   "estilo": "espacio"
   }
  ]
 }
