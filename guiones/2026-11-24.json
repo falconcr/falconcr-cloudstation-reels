@@ -1,0 +1,101 @@
+{
+ "serie": "COSTOS EN LA NUBE",
+ "pilar": "CLOUD",
+ "estilo": "espacio",
+ "formato": "cifra",
+ "escenas": [
+  {
+   "id": "hook",
+   "tipo": "hook",
+   "titulo": "El mismo servidor, *90% más barato*",
+   "grande": "-90%",
+   "texto": "Instancias Spot en la nube",
+   "voz": "Ese mismo servidor en la nube puede costarte hasta noventa por ciento menos.",
+   "seg": 4
+  },
+  {
+   "id": "giro",
+   "tipo": "puntos",
+   "titulo": "Pero te lo pueden *quitar*",
+   "texto": "Spot = capacidad que le sobra a la nube",
+   "claves": [
+    "Instancias Spot",
+    "Capacidad sobrante",
+    "Te la quitan cuando la ocupan"
+   ],
+   "voz": "Se llaman instancias Spot. Pero hay trampa: la nube te las quita cuando las ocupa para otro cliente.",
+   "seg": 7,
+   "camara": "completa"
+  },
+  {
+   "id": "cifra",
+   "tipo": "cifra",
+   "valor": "2 min",
+   "titulo": "de aviso antes de *apagarte*",
+   "texto": "AWS: 2 min · Google y Azure: 30 s",
+   "voz": "¿Cuánto aviso te dan? En AWS, dos minutos. En Google y Azure, treinta segundos. Y se apaga.",
+   "seg": 7
+  },
+  {
+   "id": "p1",
+   "tipo": "puntos",
+   "numero": 1,
+   "titulo": "Sí: trabajo que se puede *repetir*",
+   "texto": "Si se corta, arranca otra vez y listo",
+   "claves": [
+    "Reporte de ventas nocturno",
+    "Procesar fotos de productos",
+    "Pruebas del sistema"
+   ],
+   "voz": "Uno: dónde sí. En trabajo que se puede repetir: el reporte de ventas de la noche, procesar fotos, pruebas.",
+   "seg": 7
+  },
+  {
+   "id": "p2",
+   "tipo": "puntos",
+   "numero": 2,
+   "titulo": "No: lo que *no puede parar*",
+   "texto": "Si se apaga, perdés ventas",
+   "claves": [
+    "Cobros con tarjeta",
+    "Base de datos",
+    "Tienda en un solo servidor"
+   ],
+   "voz": "Dos: dónde no. En tus cobros, tu base de datos o una tienda que vive en un solo servidor.",
+   "seg": 7
+  },
+  {
+   "id": "p3",
+   "tipo": "puntos",
+   "numero": 3,
+   "titulo": "La mezcla que *sí* funciona",
+   "texto": "Base normal siempre arriba, picos con Spot",
+   "claves": [
+    "Base fija: servidores normales",
+    "Picos: instancias Spot",
+    "Autoescalado repone las caídas"
+   ],
+   "voz": "Tres: la mezcla. Una base de servidores normales siempre arriba, y los picos con Spot. Si una cae, el autoescalado pone otra.",
+   "seg": 9
+  },
+  {
+   "id": "pregunta",
+   "tipo": "pregunta",
+   "titulo": "¿Usarías Spot en *tu* negocio?",
+   "items": [
+    "Ya lo uso",
+    "Solo para pruebas",
+    "Ni loco"
+   ],
+   "voz": "¿Y vos? A, ya lo uso. B, solo para pruebas. C, ni loco. Dejá tu opinión.",
+   "seg": 6
+  },
+  {
+   "id": "cta",
+   "tipo": "cta",
+   "titulo": "Dejá tu *opinión*",
+   "voz": "En Cloud Station te damos más información. Escribinos por WhatsApp.",
+   "seg": 4
+  }
+ ]
+}
